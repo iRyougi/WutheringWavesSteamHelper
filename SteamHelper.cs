@@ -134,6 +134,75 @@ namespace WutheringWavesSteamHelper
             return null;
         }
 
+        public static List<string> DetectCnWutheringWavesPaths()
+        {
+            var results = new List<string>();
+            var relativePath = Path.Combine("Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+
+            // Check registry for Kuro launcher (¹ú·þ¿âÂåÆô¶¯Æ÷)
+            string[] registryKeys =
+            [
+                @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\KRInstall Wuthering Waves",
+                @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\KRInstall Wuthering Waves",
+            ];
+
+            foreach (var regKey in registryKeys)
+            {
+                try
+                {
+                    using var key = Registry.LocalMachine.OpenSubKey(regKey);
+                    var installLocation = key?.GetValue("InstallPath") as string
+                                       ?? key?.GetValue("InstallLocation") as string;
+                    if (!string.IsNullOrEmpty(installLocation))
+                    {
+                        var exePath = Path.Combine(installLocation, relativePath);
+                        if (File.Exists(exePath) && !results.Contains(installLocation, StringComparer.OrdinalIgnoreCase))
+                            results.Add(installLocation);
+                    }
+                }
+                catch { }
+            }
+
+            // Search common installation paths
+            var drives = DriveInfo.GetDrives()
+                .Where(d => d.IsReady && d.DriveType == DriveType.Fixed)
+                .Select(d => d.RootDirectory.FullName);
+
+            string[] commonFolders =
+            [
+                @"Wuthering Waves",
+                @"Ãù³±",
+                @"Kuro\Wuthering Waves",
+                @"KuroGames\Wuthering Waves",
+                @"Program Files\Wuthering Waves",
+                @"Program Files (x86)\Wuthering Waves",
+                @"Games\Wuthering Waves",
+            ];
+
+            foreach (var drive in drives)
+            {
+                foreach (var folder in commonFolders)
+                {
+                    var candidatePath = Path.Combine(drive, folder);
+                    if (Directory.Exists(candidatePath))
+                    {
+                        var exePath = Path.Combine(candidatePath, relativePath);
+                        if (File.Exists(exePath) && !results.Contains(candidatePath, StringComparer.OrdinalIgnoreCase))
+                            results.Add(candidatePath);
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        public static string GenerateLaunchCommand(string wutheringWavesInstallPath)
+        {
+            var exePath = Path.Combine(wutheringWavesInstallPath,
+                "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+            return $"\"{exePath}\" %command%";
+        }
+
         public static string GenerateAcfContent(string launcherPath, string buildId, string lastOwner, string manifest)
         {
             var escapedLauncherPath = launcherPath.Replace("\\", "\\\\");

@@ -199,6 +199,31 @@ namespace WutheringWavesSteamHelper
                 var gamePath = Path.Combine(commonPath, "Wuthering Waves");
                 var launcherPath = Path.Combine(txtSteamInstallPath.Text, "steam.exe");
 
+                var acfPath = Path.Combine(steamappsPath, "appmanifest_3513350.acf");
+                var exePath = Path.Combine(gamePath, "Wuthering Waves.exe");
+
+                // Check if files already exist
+                bool acfExists = File.Exists(acfPath);
+                bool exeExists = File.Exists(exePath);
+
+                if (acfExists || exeExists)
+                {
+                    var existingFiles = new List<string>();
+                    if (acfExists) existingFiles.Add("appmanifest_3513350.acf");
+                    if (exeExists) existingFiles.Add("Wuthering Waves.exe");
+
+                    var message = $"检测到以下文件已存在：\n\n{string.Join("\n", existingFiles)}\n\n是否要覆盖这些文件？";
+                    var result = MessageBox.Show(message, "文件已存在", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result != DialogResult.Yes)
+                    {
+                        AppendLog("用户取消操作，未覆盖现有文件。");
+                        return;
+                    }
+
+                    AppendLog("用户选择覆盖现有文件。");
+                }
+
                 // 1. Create steamapps directory if needed
                 if (!Directory.Exists(steamappsPath))
                 {
@@ -207,7 +232,6 @@ namespace WutheringWavesSteamHelper
                 }
 
                 // 2. Generate appmanifest_3513350.acf
-                var acfPath = Path.Combine(steamappsPath, "appmanifest_3513350.acf");
                 var acfContent = SteamHelper.GenerateAcfContent(
                     launcherPath,
                     txtBuildId.Text.Trim(),
@@ -224,20 +248,20 @@ namespace WutheringWavesSteamHelper
                 }
 
                 // 4. Create empty Wuthering Waves.exe
-                var exePath = Path.Combine(gamePath, "Wuthering Waves.exe");
-                if (!File.Exists(exePath))
+                if (!exeExists)
                 {
                     File.Create(exePath).Dispose();
                     AppendLog($"已创建空 EXE：{exePath}");
                 }
                 else
                 {
-                    AppendLog($"EXE 文件已存在，跳过：{exePath}");
+                    File.WriteAllBytes(exePath, Array.Empty<byte>());
+                    AppendLog($"已覆盖 EXE 文件：{exePath}");
                 }
 
-                AppendLog("[完成] 全部配置已生成完毕！请重启 Steam 后即可在库中看到鸣潮。");
+                AppendLog("[完成] 全部配置已生成完毕！请重启 Steam 。");
                 MessageBox.Show(
-                    "配置生成成功！\n\n请重启 Steam 客户端，然后在库中找到「Wuthering Waves」即可启动。",
+                    "配置生成成功！\n\n请重启 Steam 客户端，然后在库中找到「Wuthering Waves」配置。",
                     "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -246,6 +270,60 @@ namespace WutheringWavesSteamHelper
                 MessageBox.Show($"生成过程中出错：\n{ex.Message}", "错误",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void BtnLaunchCommand_Click(object? sender, EventArgs e)
+        {
+            AppendLog("正在搜索国服鸣潮安装路径...");
+            var paths = SteamHelper.DetectCnWutheringWavesPaths();
+
+            if (paths.Count == 0)
+            {
+                AppendLog("未找到国服鸣潮安装路径，请手动选择。");
+                using var dialog = new FolderBrowserDialog
+                {
+                    Description = "请选择国服鸣潮的安装文件夹（包含 \"Wuthering Waves Game\" 的文件夹）",
+                    UseDescriptionForTitle = true
+                };
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var exePath = Path.Combine(dialog.SelectedPath,
+                        "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+                    if (!File.Exists(exePath))
+                    {
+                        MessageBox.Show(
+                            $"所选路径下未找到客户端文件：\n{exePath}\n\n请确认选择的是鸣潮的安装根目录。",
+                            "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    var command = SteamHelper.GenerateLaunchCommand(dialog.SelectedPath);
+                    AppendLog($"已手动选择国服鸣潮路径：{dialog.SelectedPath}");
+                    using var cmdDialog = new LaunchCommandDialog(command);
+                    cmdDialog.ShowDialog(this);
+                }
+                return;
+            }
+
+            string selectedPath;
+            if (paths.Count == 1)
+            {
+                selectedPath = paths[0];
+            }
+            else
+            {
+                using var selectionDialog = new LibrarySelectionDialog(paths);
+                selectionDialog.Text = "选择国服鸣潮安装路径";
+                if (selectionDialog.ShowDialog(this) == DialogResult.OK && !string.IsNullOrEmpty(selectionDialog.SelectedPath))
+                    selectedPath = selectionDialog.SelectedPath;
+                else
+                    selectedPath = paths[0];
+            }
+
+            AppendLog($"已找到国服鸣潮路径：{selectedPath}");
+            var launchCommand = SteamHelper.GenerateLaunchCommand(selectedPath);
+            using var launchCommandDialog = new LaunchCommandDialog(launchCommand);
+            launchCommandDialog.ShowDialog(this);
         }
 
         private void BtnHelp_Click(object? sender, EventArgs e)

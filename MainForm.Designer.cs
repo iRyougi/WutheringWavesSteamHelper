@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(720, 620);
+            this.ClientSize = new System.Drawing.Size(720, 665);
             this.Text = "\u9e23\u6f6e Steam \u542f\u52a8\u52a9\u624b";
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -39,10 +39,11 @@
             this.BackColor = Color.FromArgb(245, 247, 250);
 
             // Set application icon from embedded resource
-            using var iconStream = typeof(MainForm).Assembly.GetManifestResourceStream("WutheringWavesSteamHelper.ico");
+            var iconStream = typeof(MainForm).Assembly.GetManifestResourceStream("WutheringWavesSteamHelper.ico");
             if (iconStream != null)
             {
                 this.Icon = new Icon(iconStream);
+                iconStream.Dispose();
             }
 
             // --- Color Palette ---
@@ -186,7 +187,7 @@
             grpInfo.Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold);
             grpInfo.ForeColor = sectionTitleColor;
             grpInfo.Location = new Point(16, 260);
-            grpInfo.Size = new Size(688, 178);
+            grpInfo.Size = new Size(688, 188);
             grpInfo.BackColor = panelBg;
 
             // --- Steam ID ---
@@ -255,7 +256,7 @@
             // ==================== Generate Button ====================
             btnGenerate = new Button();
             btnGenerate.Text = "\u751f\u6210\u914d\u7f6e\u5e76\u542f\u7528 Steam \u542f\u52a8";
-            btnGenerate.Location = new Point(16, 450);
+            btnGenerate.Location = new Point(16, 456);
             btnGenerate.Size = new Size(688, 48);
             btnGenerate.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
             btnGenerate.BackColor = successColor;
@@ -265,12 +266,25 @@
             btnGenerate.Cursor = Cursors.Hand;
             btnGenerate.Click += BtnGenerate_Click;
 
+            // ==================== Launch Command Button ====================
+            btnLaunchCommand = new Button();
+            btnLaunchCommand.Text = "\u641c\u7d22\u56fd\u670d\u9e23\u6f6e\u5e76\u751f\u6210\u542f\u52a8\u547d\u4ee4";
+            btnLaunchCommand.Location = new Point(16, 512);
+            btnLaunchCommand.Size = new Size(688, 48);
+            btnLaunchCommand.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
+            btnLaunchCommand.BackColor = accentColor;
+            btnLaunchCommand.ForeColor = Color.White;
+            btnLaunchCommand.FlatStyle = FlatStyle.Flat;
+            btnLaunchCommand.FlatAppearance.BorderSize = 0;
+            btnLaunchCommand.Cursor = Cursors.Hand;
+            btnLaunchCommand.Click += BtnLaunchCommand_Click;
+
             // ==================== Log Group ====================
             var grpLog = new GroupBox();
             grpLog.Text = "  \u8fd0\u884c\u65e5\u5fd7  ";
             grpLog.Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold);
             grpLog.ForeColor = sectionTitleColor;
-            grpLog.Location = new Point(16, 510);
+            grpLog.Location = new Point(16, 568);
             grpLog.Size = new Size(688, 98);
             grpLog.BackColor = panelBg;
 
@@ -296,6 +310,7 @@
                 grpPaths,
                 grpInfo,
                 btnGenerate,
+                btnLaunchCommand,
                 grpLog,
                 lblLog
             });
@@ -325,6 +340,7 @@
         private Button btnGenerate;
 
         private Button btnHelp;
+        private Button btnLaunchCommand;
 
         private Label lblLog;
         private TextBox txtLog;
