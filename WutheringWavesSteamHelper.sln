@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36915.13 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WutheringWavesSteamHelper", "WutheringWavesSteamHelper.csproj", "{20E50189-226D-4A8E-BA0B-50C84606797D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20E50189-226D-4A8E-BA0B-50C84606797D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E50189-226D-4A8E-BA0B-50C84606797D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E50189-226D-4A8E-BA0B-50C84606797D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E50189-226D-4A8E-BA0B-50C84606797D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BBB7F8C-E4BB-4953-A91C-82500854A006}
+	EndGlobalSection
+EndGlobal
