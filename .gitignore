@@ -364,6 +364,5 @@ FodyWeavers.xsd
 
 #自定义忽略文件
 *.acf
-/Docs/apprequirment.md
 /Docs/*.acf
 /Docs/apprequirement.md
