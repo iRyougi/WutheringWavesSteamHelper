@@ -69,12 +69,13 @@ WutheringWavesSteamHelper 是一个帮助玩家将鸣潮（Wuthering Waves）游
 
 1. 打开 Steam 客户端
 2. 在游戏库中找到"Wuthering Waves"
-3. 点击"安装"或直接启动游戏
-4. Steam 会自动验证并下载游戏文件
+3. 设置-属性，找到启动选项
+4. 在你的启动选项处填入："你的鸣潮安装位置\Wuthering Waves Game\Client\Binaries\Win64\Client-Win64-Shipping.exe" %command%
+5. 点击"更新"或直接启动游戏
 
 ## 注意事项
 
-?? **重要提示**
+**重要提示**
 
 1. **首次使用**：首次添加后，Steam 会显示游戏需要更新，这是正常现象
 2. **游戏路径**：建议选择有足够空间的游戏库（鸣潮需要约 30GB+ 空间）
