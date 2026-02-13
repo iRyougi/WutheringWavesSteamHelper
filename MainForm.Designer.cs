@@ -38,11 +38,11 @@
             this.Font = new Font("Microsoft YaHei UI", 9F);
             this.BackColor = Color.FromArgb(245, 247, 250);
 
-            // Set application icon
-            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Icons", "WutheringWavesSteamHelper.ico");
-            if (File.Exists(iconPath))
+            // Set application icon from embedded resource
+            using var iconStream = typeof(MainForm).Assembly.GetManifestResourceStream("WutheringWavesSteamHelper.ico");
+            if (iconStream != null)
             {
-                this.Icon = new Icon(iconPath);
+                this.Icon = new Icon(iconStream);
             }
 
             // --- Color Palette ---

@@ -7,6 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Assets\Icons\WutheringWavesSteamHelper.ico</ApplicationIcon>
+    <Company>KAMITSUBAKI STUDIO</Company>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,15 +20,9 @@
     <None Include="Docs\**\*">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Icons\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Assets\Images\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="Assets\Icons\WutheringWavesSteamHelper.ico">
+      <LogicalName>WutheringWavesSteamHelper.ico</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
