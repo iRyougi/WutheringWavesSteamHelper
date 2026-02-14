@@ -4,7 +4,7 @@
 
 ## 简介
 
-WutheringWavesSteamHelper 是一个帮助玩家将鸣潮（Wuthering Waves）游戏添加到 Steam 库的工具。通过生成必要的配置文件，让玩家可以通过 Steam 客户端启动和管理鸣潮游戏。
+WutheringWavesSteamHelper 是一个通过生成必要的配置文件，让玩家可以通过 Steam 客户端启动和管理国服鸣潮
 
 ## 主要功能
 
@@ -12,13 +12,14 @@ WutheringWavesSteamHelper 是一个帮助玩家将鸣潮（Wuthering Waves）游
 - 自动检测 Steam 游戏库路径（支持多个库）
 - 自动从 SteamDB 获取最新的 BuildID 和 Manifest
 - 自动生成游戏配置文件（appmanifest_3513350.acf）
-- 一键将鸣潮添加到 Steam 库
+- 一键从Steam端启动国服鸣潮
 
 ## 系统要求
 
-- Windows 操作系统（Windows 10/11）
+- Windows 操作系统（Windows 10/11）基于x64
 - .NET 8.0 运行时
 - 已安装 Steam 客户端
+- Steam游戏库内已入库鸣潮游戏
 
 ## 使用说明
 
@@ -65,12 +66,12 @@ WutheringWavesSteamHelper 是一个帮助玩家将鸣潮（Wuthering Waves）游
 3. 创建 `steamapps/common/Wuthering Waves` 目录
 4. 创建空的 `Wuthering Waves.exe` 文件
 
-### 6. 在 Steam 中启动游戏
+### 6. 在 Steam 中填入启动命令
 
-1. 打开 Steam 客户端
+1. 重启 Steam 客户端
 2. 在游戏库中找到"Wuthering Waves"
-3. 设置-属性，找到启动选项
-4. 在你的启动选项处填入："你的鸣潮安装位置\Wuthering Waves Game\Client\Binaries\Win64\Client-Win64-Shipping.exe" %command%
+3. 点击工具中的蓝色按钮获取命令
+4. 在你的启动选项处填入你刚刚复制的命令
 5. 点击"更新"或直接启动游戏
 
 ## 注意事项
@@ -78,7 +79,6 @@ WutheringWavesSteamHelper 是一个帮助玩家将鸣潮（Wuthering Waves）游
 **重要提示**
 
 1. **首次使用**：首次添加后，Steam 会显示游戏需要更新，这是正常现象
-2. **游戏路径**：建议选择有足够空间的游戏库（鸣潮需要约 30GB+ 空间）
 3. **Steam ID**：请确保输入正确的 Steam ID，否则可能导致游戏无法正常识别
 4. **网络连接**：自动获取 BuildID 和 Manifest 需要网络连接
 5. **Steam 运行**：操作前建议关闭 Steam 客户端，完成后再启动
@@ -100,7 +100,7 @@ A: 可以，程序支持 Steam 的所有游戏库。建议选择空间充足的�
 ## 技术说明
 
 - **框架**：.NET 8.0 Windows Forms
-- **开发商**：KAMITSUBAKI STUDIO
+- **开发**：iRyougi
 - **游戏 AppID**：3513350
 - **主要 Depot**：3513351
 
