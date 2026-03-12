@@ -8,6 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Assets\Icons\WutheringWavesSteamHelper.ico</ApplicationIcon>
     <Company>KAMITSUBAKI STUDIO</Company>
+    <Version>1.1.0</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>

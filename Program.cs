@@ -2,15 +2,15 @@ namespace WutheringWavesSteamHelper
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
+            // PerMonitorV2: each monitor uses its own DPI; WinForms re-scales on monitor change.
+            // Must be set before any UI is created, and works in tandem with the PerMonitorV2
+            // declaration in app.manifest.
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
         }
     }
