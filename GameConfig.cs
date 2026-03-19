@@ -29,12 +29,7 @@ namespace WutheringWavesSteamHelper
             },
             new GameConfig
             {
-                Name = "碧蓝档案",
-                IsPlaceholder = true
-            },
-            new GameConfig
-            {
-                Name = "尘白禁区",
+                Name = "敬请期待",
                 IsPlaceholder = true
             },
         ];

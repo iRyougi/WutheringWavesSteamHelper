@@ -4,12 +4,20 @@ namespace WutheringWavesSteamHelper
     {
         private int _selectedGameIndex = 0;
         private List<Button> _navButtons = new();
+        private AppSettings _settings = new();
 
         public MainForm()
         {
             InitializeComponent();
             BuildSidebarNavButtons();
+            _settings = AppSettings.Load();
+            LoadSettingsToUI();
             AutoDetectPaths();
+            if (_settings.CnGameSource == "wegame")
+                rdoWeGame.Checked = true;
+            // 在初始状态设置完成后再订阅事件，避免构造期间触发
+            rdoOfficial.CheckedChanged += OnSourceChanged;
+            rdoWeGame.CheckedChanged += OnSourceChanged;
         }
 
         private void BuildSidebarNavButtons()
@@ -71,19 +79,67 @@ namespace WutheringWavesSteamHelper
 
         private void AutoDetectPaths()
         {
-            var steamPath = SteamHelper.DetectSteamInstallPath();
-            if (!string.IsNullOrEmpty(steamPath))
+            if (string.IsNullOrEmpty(txtSteamInstallPath.Text))
             {
-                txtSteamInstallPath.Text = steamPath;
-                AppendLog($"已自动识别 Steam 安装路径：{steamPath}");
+                var steamPath = SteamHelper.DetectSteamInstallPath();
+                if (!string.IsNullOrEmpty(steamPath))
+                {
+                    txtSteamInstallPath.Text = steamPath;
+                    AppendLog($"已自动识别 Steam 安装路径：{steamPath}");
+                }
             }
 
-            var libraryPaths = SteamHelper.DetectSteamLibraryPaths();
-            if (libraryPaths.Count > 0)
+            if (string.IsNullOrEmpty(txtSteamLibraryPath.Text))
             {
-                txtSteamLibraryPath.Text = libraryPaths[0];
-                AppendLog($"已自动识别 SteamLibrary 路径：{libraryPaths[0]}");
+                var libraryPaths = SteamHelper.DetectSteamLibraryPaths();
+                if (libraryPaths.Count > 0)
+                {
+                    txtSteamLibraryPath.Text = libraryPaths[0];
+                    AppendLog($"已自动识别 SteamLibrary 路径：{libraryPaths[0]}");
+                }
             }
+        }
+
+        private void LoadSettingsToUI()
+        {
+            if (!string.IsNullOrEmpty(_settings.SteamLibraryPath))
+                txtSteamLibraryPath.Text = _settings.SteamLibraryPath;
+            if (!string.IsNullOrEmpty(_settings.SteamInstallPath))
+                txtSteamInstallPath.Text = _settings.SteamInstallPath;
+            if (!string.IsNullOrEmpty(_settings.SteamId))
+                txtSteamId.Text = _settings.SteamId;
+            if (!string.IsNullOrEmpty(_settings.BuildId))
+            {
+                txtBuildId.Text = _settings.BuildId;
+                txtBuildId.ReadOnly = false;
+            }
+            if (!string.IsNullOrEmpty(_settings.Manifest))
+            {
+                txtManifest.Text = _settings.Manifest;
+                txtManifest.ReadOnly = false;
+            }
+        }
+
+        private void SaveSettingsFromUI()
+        {
+            _settings.SteamLibraryPath = txtSteamLibraryPath.Text;
+            _settings.SteamInstallPath = txtSteamInstallPath.Text;
+            _settings.SteamId = txtSteamId.Text;
+            _settings.BuildId = txtBuildId.Text;
+            _settings.Manifest = txtManifest.Text;
+            _settings.CnGameSource = rdoWeGame.Checked ? "wegame" : "official";
+            if (!_settings.Save())
+                AppendLog("[警告] 设置保存失败，下次启动将无法自动填入");
+        }
+
+        private void OnSourceChanged(object? sender, EventArgs e)
+        {
+            if (!rdoWeGame.Checked) return;
+            var wegamePath = SteamHelper.DetectWeGameInstallPath();
+            if (wegamePath != null)
+                AppendLog($"已检测到 WeGame 鸣潮路径：{wegamePath}");
+            else
+                AppendLog("未检测到 WeGame 鸣潮安装，请确认已安装 WeGame 版鸣潮");
         }
 
         private void BtnBrowseLibrary_Click(object? sender, EventArgs e)
@@ -264,22 +320,18 @@ namespace WutheringWavesSteamHelper
                 bool acfExists = File.Exists(acfPath);
                 bool exeExists = File.Exists(exePath);
 
-                if (acfExists || exeExists)
+                // exe 已存在则静默跳过；acf 已存在才询问是否覆盖
+                if (acfExists)
                 {
-                    var existingFiles = new List<string>();
-                    if (acfExists) existingFiles.Add("appmanifest_3513350.acf");
-                    if (exeExists) existingFiles.Add("Wuthering Waves.exe");
-
-                    var message = $"检测到以下文件已存在：\n\n{string.Join("\n", existingFiles)}\n\n是否要覆盖这些文件？";
-                    var result = MessageBox.Show(message, "文件已存在", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
+                    var result = MessageBox.Show(
+                        "检测到配置文件已存在：\nappmanifest_3513350.acf\n\n是否要覆盖该文件？",
+                        "文件已存在", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (result != DialogResult.Yes)
                     {
-                        AppendLog("用户取消操作，未覆盖已有文件。");
+                        AppendLog("用户取消覆盖 ACF 文件，操作已跳过。");
                         return;
                     }
-
-                    AppendLog("用户选择覆盖已有文件。");
+                    AppendLog("用户选择覆盖 ACF 文件。");
                 }
 
                 if (!Directory.Exists(steamappsPath))
@@ -309,10 +361,10 @@ namespace WutheringWavesSteamHelper
                 }
                 else
                 {
-                    File.WriteAllBytes(exePath, Array.Empty<byte>());
-                    AppendLog($"已覆盖 EXE 文件：{exePath}");
+                    AppendLog($"EXE 文件已存在，跳过：{exePath}");
                 }
 
+                SaveSettingsFromUI();
                 AppendLog("[完成] 全部操作已完成，请重启 Steam。");
                 MessageBox.Show(
                     "配置生成成功！\n\n请重启 Steam 客户端，然后在库中找到「Wuthering Waves」并启动。",
@@ -329,59 +381,95 @@ namespace WutheringWavesSteamHelper
         private void BtnLaunchCommand_Click(object? sender, EventArgs e)
         {
             AppendLog("正在搜索国服鸣潮安装路径...");
-            var paths = SteamHelper.DetectCnWutheringWavesPaths();
 
-            if (paths.Count == 0)
+            string? selectedPath = null;
+
+            if (rdoWeGame.Checked)
             {
-                AppendLog("未找到国服鸣潮安装路径，请手动选择");
-                using var dialog = new FolderBrowserDialog
+                // WeGame 模式：优先读注册表
+                selectedPath = SteamHelper.DetectWeGameInstallPath();
+                if (selectedPath == null)
                 {
-                    Description = "请选择国服鸣潮的安装文件夹（含 \"Wuthering Waves Game\" 子文件夹）",
-                    UseDescriptionForTitle = true
-                };
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    var exePath = Path.Combine(dialog.SelectedPath,
-                        "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
-                    if (!File.Exists(exePath))
+                    AppendLog("未检测到 WeGame 鸣潮，请手动选择");
+                    using var dialog = new FolderBrowserDialog
                     {
-                        MessageBox.Show(
-                            $"所选路径中未找到客户端文件：\n{exePath}\n\n请确认选择了国服鸣潮的安装根目录。",
-                            "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        Description = "请选择 WeGame 鸣潮安装文件夹（含 Client 子文件夹）",
+                        UseDescriptionForTitle = true
+                    };
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var exePath = Path.Combine(dialog.SelectedPath, "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+                        if (!File.Exists(exePath))
+                        {
+                            MessageBox.Show(
+                                $"所选路径中未找到客户端文件：\n{exePath}\n\n请确认选择了 WeGame 鸣潮的安装根目录（含 Client 文件夹）。",
+                                "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        selectedPath = dialog.SelectedPath;
                     }
-                    var command = SteamHelper.GenerateLaunchCommand(dialog.SelectedPath);
-                    AppendLog($"已手动选择国服鸣潮路径：{dialog.SelectedPath}");
-                    using var cmdDialog = new LaunchCommandDialog(command);
-                    cmdDialog.ShowDialog(this);
+                    else return;
                 }
-                return;
-            }
-
-            string selectedPath;
-            if (paths.Count == 1)
-            {
-                selectedPath = paths[0];
             }
             else
             {
-                using var selectionDialog = new LibrarySelectionDialog(paths);
-                selectionDialog.Text = "选择国服鸣潮安装路径";
-                if (selectionDialog.ShowDialog(this) == DialogResult.OK && !string.IsNullOrEmpty(selectionDialog.SelectedPath))
-                    selectedPath = selectionDialog.SelectedPath;
-                else
+                // 官方启动器模式
+                var paths = SteamHelper.DetectCnWutheringWavesPaths()
+                    .Where(p => File.Exists(Path.Combine(p, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe")))
+                    .ToList();
+
+                if (paths.Count == 0)
+                {
+                    AppendLog("未找到官方启动器鸣潮路径，请手动选择");
+                    using var dialog = new FolderBrowserDialog
+                    {
+                        Description = "请选择国服鸣潮的安装文件夹（含 \"Wuthering Waves Game\" 子文件夹）",
+                        UseDescriptionForTitle = true
+                    };
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var exePath = Path.Combine(dialog.SelectedPath, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+                        if (!File.Exists(exePath))
+                        {
+                            MessageBox.Show(
+                                $"所选路径中未找到客户端文件：\n{exePath}\n\n请确认选择了国服鸣潮的安装根目录。",
+                                "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        selectedPath = dialog.SelectedPath;
+                    }
+                    else return;
+                }
+                else if (paths.Count == 1)
+                {
                     selectedPath = paths[0];
+                }
+                else
+                {
+                    using var selectionDialog = new LibrarySelectionDialog(paths);
+                    selectionDialog.Text = "选择国服鸣潮安装路径";
+                    selectedPath = selectionDialog.ShowDialog(this) == DialogResult.OK && !string.IsNullOrEmpty(selectionDialog.SelectedPath)
+                        ? selectionDialog.SelectedPath : paths[0];
+                }
             }
 
-            AppendLog($"已找到国服鸣潮路径：{selectedPath}");
+            AppendLog($"已找到鸣潮路径：{selectedPath}");
             var launchCommand = SteamHelper.GenerateLaunchCommand(selectedPath);
+            SaveSettingsFromUI();
             using var launchCommandDialog = new LaunchCommandDialog(launchCommand);
             launchCommandDialog.ShowDialog(this);
         }
 
         private void BtnOpenLauncher_Click(object? sender, EventArgs e)
         {
+            if (rdoWeGame.Checked)
+            {
+                MessageBox.Show(
+                    "WeGame 版鸣潮请通过 WeGame 客户端启动游戏。\n\n此按钮仅适用于官方启动器版本。",
+                    "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             AppendLog("正在搜索官方启动器...");
             var paths = SteamHelper.DetectCnWutheringWavesPaths();
 

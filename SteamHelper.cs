@@ -134,12 +134,25 @@ namespace WutheringWavesSteamHelper
             return null;
         }
 
+        public static string? DetectWeGameInstallPath()
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Rail\WutheringWaves");
+                var path = key?.GetValue("InstallPath") as string;
+                if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+                    return path;
+            }
+            catch { }
+            return null;
+        }
+
         public static List<string> DetectCnWutheringWavesPaths()
         {
             var results = new List<string>();
             var relativePath = Path.Combine("Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
 
-            // Check registry for Kuro launcher (��������������)
+            // Check registry for Kuro launcher (官方启动器)
             string[] registryKeys =
             [
                 @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\KRInstall Wuthering Waves",
@@ -163,6 +176,21 @@ namespace WutheringWavesSteamHelper
                 catch { }
             }
 
+            // WeGame 注册表检测 (HKCU\SOFTWARE\Rail\WutheringWaves)
+            try
+            {
+                using var wegameKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Rail\WutheringWaves");
+                var wegameInstall = wegameKey?.GetValue("InstallPath") as string;
+                if (!string.IsNullOrEmpty(wegameInstall))
+                {
+                    // WeGame结构：{InstallPath}\Client\Binaries\Win64\Client-Win64-Shipping.exe
+                    var wegameExe = Path.Combine(wegameInstall, "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+                    if (File.Exists(wegameExe) && !results.Contains(wegameInstall, StringComparer.OrdinalIgnoreCase))
+                        results.Add(wegameInstall);
+                }
+            }
+            catch { }
+
             // Search common installation paths
             var drives = DriveInfo.GetDrives()
                 .Where(d => d.IsReady && d.DriveType == DriveType.Fixed)
@@ -171,7 +199,7 @@ namespace WutheringWavesSteamHelper
             string[] commonFolders =
             [
                 @"Wuthering Waves",
-                @"����",
+                @"鸣潮",
                 @"Kuro\Wuthering Waves",
                 @"KuroGames\Wuthering Waves",
                 @"Program Files\Wuthering Waves",
@@ -196,11 +224,16 @@ namespace WutheringWavesSteamHelper
             return results;
         }
 
-        public static string GenerateLaunchCommand(string wutheringWavesInstallPath)
+        public static string GenerateLaunchCommand(string installPath)
         {
-            var exePath = Path.Combine(wutheringWavesInstallPath,
-                "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
-            return $"\"{exePath}\" %command%";
+            // 优先检测WeGame结构（无"Wuthering Waves Game"层）
+            var wegameExe = Path.Combine(installPath, "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+            if (File.Exists(wegameExe))
+                return $"\"{wegameExe}\" %command%";
+
+            // 官方启动器结构；调用方应在调用前验证路径有效性
+            var officialExe = Path.Combine(installPath, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
+            return $"\"{officialExe}\" %command%";
         }
 
         public static string GenerateAcfContent(string launcherPath, string buildId, string lastOwner, string manifest)

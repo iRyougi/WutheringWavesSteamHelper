@@ -19,7 +19,7 @@ namespace WutheringWavesSteamHelper
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             // 设计尺寸：边栏220 + 内容区680 = 900宽；头部56 + 内容区716 = 772高
-            this.ClientSize = new System.Drawing.Size(900, 772);
+            this.ClientSize = new System.Drawing.Size(900, 816);
             this.Text = "Steam 游戏启动助手";
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -37,7 +37,7 @@ namespace WutheringWavesSteamHelper
             // ===== Sidebar (宽220) =====
             pnlSidebar = new Panel();
             pnlSidebar.Location = new Point(0, 0);
-            pnlSidebar.Size = new Size(220, 772);
+            pnlSidebar.Size = new Size(220, 816);
             pnlSidebar.BackColor = Color.FromArgb(30, 42, 58);
 
             // 标题用 AutoSize，不限制宽高
@@ -65,7 +65,7 @@ namespace WutheringWavesSteamHelper
             lblVersion.Text = "v1.1.0";
             lblVersion.Font = new Font("Microsoft YaHei UI", 8.5F);
             lblVersion.ForeColor = Color.FromArgb(100, 120, 145);
-            lblVersion.Location = new Point(16, 748);
+            lblVersion.Location = new Point(16, 792);
             lblVersion.AutoSize = true;
             pnlSidebar.Controls.Add(lblVersion);
 
@@ -106,7 +106,7 @@ namespace WutheringWavesSteamHelper
             // ===== Content Area (x=220, y=56, 宽680, 高716) =====
             pnlContent = new Panel();
             pnlContent.Location = new Point(220, 56);
-            pnlContent.Size = new Size(680, 716);
+            pnlContent.Size = new Size(680, 760);
             pnlContent.BackColor = Color.FromArgb(243, 243, 243);
             pnlContent.AutoScroll = true;
 
@@ -197,9 +197,44 @@ namespace WutheringWavesSteamHelper
             btnGenerate.Click += BtnGenerate_Click;
             pnlContent.Controls.Add(btnGenerate);
 
+            // --- 国服版本切换面板 (y=464, h=36) ---
+            pnlSourceSwitch = new Panel();
+            pnlSourceSwitch.Location = new Point(16, 464);
+            pnlSourceSwitch.Size = new Size(648, 36);
+            pnlSourceSwitch.BackColor = Color.FromArgb(241, 245, 249);
+
+            var lblSwitchHint = new Label();
+            lblSwitchHint.Text = "国服版本：";
+            lblSwitchHint.Font = new Font("Microsoft YaHei UI", 9F);
+            lblSwitchHint.ForeColor = Color.FromArgb(55, 65, 81);
+            lblSwitchHint.Location = new Point(12, 9);
+            lblSwitchHint.AutoSize = true;
+
+            rdoOfficial = new RadioButton();
+            rdoOfficial.Text = "官方启动器";
+            rdoOfficial.Font = new Font("Microsoft YaHei UI", 9F);
+            rdoOfficial.ForeColor = Color.FromArgb(30, 41, 59);
+            rdoOfficial.Location = new Point(115, 8);
+            rdoOfficial.AutoSize = true;
+            rdoOfficial.Checked = true;
+            rdoOfficial.Cursor = Cursors.Hand;
+
+            rdoWeGame = new RadioButton();
+            rdoWeGame.Text = "WeGame";
+            rdoWeGame.Font = new Font("Microsoft YaHei UI", 9F);
+            rdoWeGame.ForeColor = Color.FromArgb(30, 41, 59);
+            rdoWeGame.Location = new Point(250, 8);
+            rdoWeGame.AutoSize = true;
+            rdoWeGame.Cursor = Cursors.Hand;
+
+            pnlSourceSwitch.Controls.Add(lblSwitchHint);
+            pnlSourceSwitch.Controls.Add(rdoOfficial);
+            pnlSourceSwitch.Controls.Add(rdoWeGame);
+            pnlContent.Controls.Add(pnlSourceSwitch);
+
             btnLaunchCommand = new Button();
             btnLaunchCommand.Text = "搜索国服鸣潮并生成启动命令";
-            btnLaunchCommand.Location = new Point(16, 464);
+            btnLaunchCommand.Location = new Point(16, 508);
             btnLaunchCommand.Size = new Size(648, 44);
             btnLaunchCommand.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             btnLaunchCommand.BackColor = Color.FromArgb(59, 130, 246);
@@ -212,7 +247,7 @@ namespace WutheringWavesSteamHelper
 
             btnOpenLauncher = new Button();
             btnOpenLauncher.Text = "打开官方启动器";
-            btnOpenLauncher.Location = new Point(16, 516);
+            btnOpenLauncher.Location = new Point(16, 560);
             btnOpenLauncher.Size = new Size(648, 44);
             btnOpenLauncher.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             btnOpenLauncher.BackColor = Color.FromArgb(100, 116, 139);
@@ -223,10 +258,10 @@ namespace WutheringWavesSteamHelper
             btnOpenLauncher.Click += BtnOpenLauncher_Click;
             pnlContent.Controls.Add(btnOpenLauncher);
 
-            // --- 日志卡片 (y=572, 高128) ---
-            // btnOpenLauncher 底部 = 516+44 = 560，间距12 → y=572
+            // --- 日志卡片 (y=616, 高128) ---
+            // btnOpenLauncher 底部 = 560+44 = 604，间距12 → y=616
             // 内容：标题14，文本框38，高72 → 38+72+18=128
-            var cardLogPanel = CreateCard(new Point(16, 572), new Size(648, 128));
+            var cardLogPanel = CreateCard(new Point(16, 616), new Size(648, 128));
             cardLogPanel.Controls.Add(CreateSectionTitle("运行日志", new Point(16, 14)));
 
             lblLog = new Label();
@@ -359,6 +394,10 @@ namespace WutheringWavesSteamHelper
         private Button btnHelp;
         private Button btnLaunchCommand;
         private Button btnOpenLauncher;
+
+        private Panel pnlSourceSwitch;
+        private RadioButton rdoOfficial;
+        private RadioButton rdoWeGame;
 
         private Label lblLog;
         private TextBox txtLog;
