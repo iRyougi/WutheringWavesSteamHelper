@@ -17,12 +17,12 @@ namespace WutheringWavesSteamHelper
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            // 设计尺寸：边栏220 + 内容区680 = 900宽；头部56 + 内容区716 = 772高
-            this.ClientSize = new System.Drawing.Size(900, 816);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(900, 620);
+            this.MinimumSize = new System.Drawing.Size(760, 600);
             this.Text = "Steam 游戏启动助手";
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Font = new Font("Microsoft YaHei UI", 9F);
             this.BackColor = Color.FromArgb(243, 243, 243);
@@ -34,13 +34,12 @@ namespace WutheringWavesSteamHelper
                 iconStream.Dispose();
             }
 
-            // ===== Sidebar (宽220) =====
+            // ===== Sidebar (Dock=Left, Width=220) =====
             pnlSidebar = new Panel();
-            pnlSidebar.Location = new Point(0, 0);
-            pnlSidebar.Size = new Size(220, 816);
+            pnlSidebar.Dock = DockStyle.Left;
+            pnlSidebar.Width = 220;
             pnlSidebar.BackColor = Color.FromArgb(30, 42, 58);
 
-            // 标题用 AutoSize，不限制宽高
             var lblAppTitle = new Label();
             lblAppTitle.Text = "Steam 游戏\n启动助手";
             lblAppTitle.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
@@ -65,14 +64,20 @@ namespace WutheringWavesSteamHelper
             lblVersion.Text = "v1.1.0";
             lblVersion.Font = new Font("Microsoft YaHei UI", 8.5F);
             lblVersion.ForeColor = Color.FromArgb(100, 120, 145);
-            lblVersion.Location = new Point(16, 792);
+            lblVersion.Location = new Point(16, 16);
             lblVersion.AutoSize = true;
+            lblVersion.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
             pnlSidebar.Controls.Add(lblVersion);
 
-            // ===== Header (x=220, 宽680, 高56) =====
+            // ===== Right panel (Dock=Fill) =====
+            pnlRight = new Panel();
+            pnlRight.Dock = DockStyle.Fill;
+            pnlRight.BackColor = Color.FromArgb(243, 243, 243);
+
+            // ===== Header (Dock=Top, Height=56) =====
             pnlHeader = new Panel();
-            pnlHeader.Location = new Point(220, 0);
-            pnlHeader.Size = new Size(680, 56);
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Height = 56;
             pnlHeader.BackColor = Color.FromArgb(248, 249, 252);
 
             lblGameTitle = new Label();
@@ -94,34 +99,57 @@ namespace WutheringWavesSteamHelper
             btnHelp.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
             btnHelp.FlatAppearance.BorderSize = 1;
             btnHelp.Cursor = Cursors.Hand;
+            btnHelp.Anchor = AnchorStyles.Right | AnchorStyles.Top;
             btnHelp.Click += BtnHelp_Click;
             pnlHeader.Controls.Add(btnHelp);
 
             var headerDivider = new Panel();
-            headerDivider.Location = new Point(0, 55);
-            headerDivider.Size = new Size(680, 1);
+            headerDivider.Dock = DockStyle.Bottom;
+            headerDivider.Height = 1;
             headerDivider.BackColor = Color.FromArgb(218, 222, 230);
             pnlHeader.Controls.Add(headerDivider);
 
-            // ===== Content Area (x=220, y=56, 宽680, 高716) =====
+            // ===== Content Area (Dock=Fill, AutoScroll=true) =====
             pnlContent = new Panel();
-            pnlContent.Location = new Point(220, 56);
-            pnlContent.Size = new Size(680, 760);
+            pnlContent.Dock = DockStyle.Fill;
             pnlContent.BackColor = Color.FromArgb(243, 243, 243);
             pnlContent.AutoScroll = true;
+            pnlContent.Resize += OnContentResize;
 
-            // 内容区内边距16，卡片宽 680-32=648
-            // --- 路径设置卡片 (y=16, 高172) ---
-            // 内容：标题14px，标签行42px，输入行62px，标签行100px，输入行120px，底部间距16px → 120+26+16=162，取172
-            var cardPaths = CreateCard(new Point(16, 16), new Size(648, 172));
+            // --- 设置卡片 (y=16, h=72) ---
+            var cardToggle = CreateCard(new Point(16, 16), new Size(648, 72));
+            cardToggle.Controls.Add(CreateSectionTitle("设置", new Point(16, 14)));
+
+            cardToggle.Controls.Add(CreateLabel("国服鸣潮版本：", new Point(16, 44)));
+
+            rdoOfficial = new RadioButton();
+            rdoOfficial.Text = "官方启动器";
+            rdoOfficial.Font = new Font("Microsoft YaHei UI", 9F);
+            rdoOfficial.ForeColor = Color.FromArgb(30, 41, 59);
+            rdoOfficial.Location = new Point(160, 42);
+            rdoOfficial.AutoSize = true;
+            rdoOfficial.Checked = true;
+            rdoOfficial.Cursor = Cursors.Hand;
+            cardToggle.Controls.Add(rdoOfficial);
+
+            rdoWeGame = new RadioButton();
+            rdoWeGame.Text = "WeGame";
+            rdoWeGame.Font = new Font("Microsoft YaHei UI", 9F);
+            rdoWeGame.ForeColor = Color.FromArgb(30, 41, 59);
+            rdoWeGame.Location = new Point(300, 42);
+            rdoWeGame.AutoSize = true;
+            rdoWeGame.Cursor = Cursors.Hand;
+            cardToggle.Controls.Add(rdoWeGame);
+
+            pnlContent.Controls.Add(cardToggle);
+
+            // --- 路径设置卡片 (y=100, h=172) ---
+            var cardPaths = CreateCard(new Point(16, 100), new Size(648, 172));
             cardPaths.Controls.Add(CreateSectionTitle("路径设置", new Point(16, 14)));
 
             lblSteamLibrary = CreateLabel("SteamLibrary 路径：", new Point(16, 44));
             cardPaths.Controls.Add(lblSteamLibrary);
 
-            // 文本框宽：648-16-16-8-80-8-88=432，但保持原有比例，右侧留给两个按钮
-            // 两按钮：浏览80 + 间距8 + 自动识别100 = 188，加左右间距16+8+8=32 → 文本框宽 648-32-188=428
-            // txtBox实际高30，btnBrowse实际高24，按钮y偏移+3使两者垂直居中对齐
             txtSteamLibraryPath = CreateTextBox(new Point(16, 64), 390, true);
             cardPaths.Controls.Add(txtSteamLibraryPath);
 
@@ -149,23 +177,19 @@ namespace WutheringWavesSteamHelper
 
             pnlContent.Controls.Add(cardPaths);
 
-            // --- 账号与版本信息卡片 (y=200, 高200) ---
-            // 内容：标题14，SteamID标签42，SteamID输入62，BuildID标签102，输入122，获取按钮158，底部16 → 158+28+14=200
-            var cardInfo = CreateCard(new Point(16, 200), new Size(648, 200));
+            // --- 账号与版本信息卡片 (y=284, h=200) ---
+            var cardInfo = CreateCard(new Point(16, 284), new Size(648, 200));
             cardInfo.Controls.Add(CreateSectionTitle("账号与版本信息", new Point(16, 14)));
 
             lblSteamId = CreateLabel("Steam ID（SteamID64，例如 76561198422904257）：", new Point(16, 44));
             cardInfo.Controls.Add(lblSteamId);
 
-            // SteamID 输入框占满宽度（减去左右内边距）
             txtSteamId = CreateTextBox(new Point(16, 64), 616, false);
             cardInfo.Controls.Add(txtSteamId);
 
             lblBuildId = CreateLabel("Build ID：", new Point(16, 104));
             cardInfo.Controls.Add(lblBuildId);
 
-            // BuildID 和 Manifest 各占一半，中间留间距
-            // 总可用宽 616，各占约 300，间距 16
             txtBuildId = CreateTextBox(new Point(16, 124), 296, true);
             cardInfo.Controls.Add(txtBuildId);
 
@@ -175,7 +199,6 @@ namespace WutheringWavesSteamHelper
             txtManifest = CreateTextBox(new Point(328, 124), 304, true);
             cardInfo.Controls.Add(txtManifest);
 
-            // 获取按钮占满整行，彻底避免文字截断
             btnFetchSteamDb = CreateSecondaryButton("从 SteamDB 获取 BuildID 和 Manifest", new Point(16, 162), new Size(616, 30));
             btnFetchSteamDb.Click += BtnFetchSteamDb_Click;
             cardInfo.Controls.Add(btnFetchSteamDb);
@@ -183,10 +206,9 @@ namespace WutheringWavesSteamHelper
             pnlContent.Controls.Add(cardInfo);
 
             // --- 操作按钮区 ---
-            // cardInfo 底部 y = 200+200 = 400，间距12
             btnGenerate = new Button();
             btnGenerate.Text = "生成配置并启用 Steam 启动";
-            btnGenerate.Location = new Point(16, 412);
+            btnGenerate.Location = new Point(16, 496);
             btnGenerate.Size = new Size(648, 44);
             btnGenerate.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             btnGenerate.BackColor = Color.FromArgb(34, 139, 34);
@@ -197,44 +219,9 @@ namespace WutheringWavesSteamHelper
             btnGenerate.Click += BtnGenerate_Click;
             pnlContent.Controls.Add(btnGenerate);
 
-            // --- 国服版本切换面板 (y=464, h=36) ---
-            pnlSourceSwitch = new Panel();
-            pnlSourceSwitch.Location = new Point(16, 464);
-            pnlSourceSwitch.Size = new Size(648, 36);
-            pnlSourceSwitch.BackColor = Color.FromArgb(241, 245, 249);
-
-            var lblSwitchHint = new Label();
-            lblSwitchHint.Text = "国服版本：";
-            lblSwitchHint.Font = new Font("Microsoft YaHei UI", 9F);
-            lblSwitchHint.ForeColor = Color.FromArgb(55, 65, 81);
-            lblSwitchHint.Location = new Point(12, 9);
-            lblSwitchHint.AutoSize = true;
-
-            rdoOfficial = new RadioButton();
-            rdoOfficial.Text = "官方启动器";
-            rdoOfficial.Font = new Font("Microsoft YaHei UI", 9F);
-            rdoOfficial.ForeColor = Color.FromArgb(30, 41, 59);
-            rdoOfficial.Location = new Point(115, 8);
-            rdoOfficial.AutoSize = true;
-            rdoOfficial.Checked = true;
-            rdoOfficial.Cursor = Cursors.Hand;
-
-            rdoWeGame = new RadioButton();
-            rdoWeGame.Text = "WeGame";
-            rdoWeGame.Font = new Font("Microsoft YaHei UI", 9F);
-            rdoWeGame.ForeColor = Color.FromArgb(30, 41, 59);
-            rdoWeGame.Location = new Point(250, 8);
-            rdoWeGame.AutoSize = true;
-            rdoWeGame.Cursor = Cursors.Hand;
-
-            pnlSourceSwitch.Controls.Add(lblSwitchHint);
-            pnlSourceSwitch.Controls.Add(rdoOfficial);
-            pnlSourceSwitch.Controls.Add(rdoWeGame);
-            pnlContent.Controls.Add(pnlSourceSwitch);
-
             btnLaunchCommand = new Button();
             btnLaunchCommand.Text = "搜索国服鸣潮并生成启动命令";
-            btnLaunchCommand.Location = new Point(16, 508);
+            btnLaunchCommand.Location = new Point(16, 552);
             btnLaunchCommand.Size = new Size(648, 44);
             btnLaunchCommand.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             btnLaunchCommand.BackColor = Color.FromArgb(59, 130, 246);
@@ -247,7 +234,7 @@ namespace WutheringWavesSteamHelper
 
             btnOpenLauncher = new Button();
             btnOpenLauncher.Text = "打开官方启动器";
-            btnOpenLauncher.Location = new Point(16, 560);
+            btnOpenLauncher.Location = new Point(16, 608);
             btnOpenLauncher.Size = new Size(648, 44);
             btnOpenLauncher.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             btnOpenLauncher.BackColor = Color.FromArgb(100, 116, 139);
@@ -258,10 +245,8 @@ namespace WutheringWavesSteamHelper
             btnOpenLauncher.Click += BtnOpenLauncher_Click;
             pnlContent.Controls.Add(btnOpenLauncher);
 
-            // --- 日志卡片 (y=616, 高128) ---
-            // btnOpenLauncher 底部 = 560+44 = 604，间距12 → y=616
-            // 内容：标题14，文本框38，高72 → 38+72+18=128
-            var cardLogPanel = CreateCard(new Point(16, 616), new Size(648, 128));
+            // --- 日志卡片 (y=664, 高度自适应) ---
+            cardLogPanel = CreateCard(new Point(16, 664), new Size(648, 120));
             cardLogPanel.Controls.Add(CreateSectionTitle("运行日志", new Point(16, 14)));
 
             lblLog = new Label();
@@ -269,7 +254,7 @@ namespace WutheringWavesSteamHelper
 
             txtLog = new TextBox();
             txtLog.Location = new Point(16, 38);
-            txtLog.Size = new Size(616, 72);
+            txtLog.Size = new Size(616, 64);
             txtLog.Multiline = true;
             txtLog.ReadOnly = true;
             txtLog.ScrollBars = ScrollBars.Vertical;
@@ -280,12 +265,13 @@ namespace WutheringWavesSteamHelper
             cardLogPanel.Controls.Add(lblLog);
 
             pnlContent.Controls.Add(cardLogPanel);
-            // cardLogPanel 底部 = 572+128 = 700，加底部间距16 → 内容总高716，与 pnlContent 高度一致 ✓
 
             // ===== Assemble =====
+            pnlRight.Controls.Add(pnlContent);
+            pnlRight.Controls.Add(pnlHeader);
+
+            this.Controls.Add(pnlRight);
             this.Controls.Add(pnlSidebar);
-            this.Controls.Add(pnlHeader);
-            this.Controls.Add(pnlContent);
         }
 
         private Panel CreateCard(Point location, Size size)
@@ -366,8 +352,10 @@ namespace WutheringWavesSteamHelper
 
         private Panel pnlSidebar;
         private Panel pnlGameButtons;
+        private Panel pnlRight;
         private Panel pnlHeader;
         private Panel pnlContent;
+        private Panel cardLogPanel;
         private Label lblGameTitle;
         private Label lblVersion;
 
@@ -395,7 +383,6 @@ namespace WutheringWavesSteamHelper
         private Button btnLaunchCommand;
         private Button btnOpenLauncher;
 
-        private Panel pnlSourceSwitch;
         private RadioButton rdoOfficial;
         private RadioButton rdoWeGame;
 

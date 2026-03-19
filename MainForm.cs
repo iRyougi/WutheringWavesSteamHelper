@@ -13,9 +13,27 @@ namespace WutheringWavesSteamHelper
             _settings = AppSettings.Load();
             LoadSettingsToUI();
             AutoDetectPaths();
+
+            // 启动时：根据保存设置预设开关，若检测不到则保留并提示
             if (_settings.CnGameSource == "wegame")
+            {
                 rdoWeGame.Checked = true;
-            // 在初始状态设置完成后再订阅事件，避免构造期间触发
+                if (SteamHelper.DetectWeGameInstallPath() == null)
+                    AppendLog("提示：上次使用 WeGame 模式，但未检测到 WeGame 鸣潮安装");
+            }
+            else
+            {
+                // 官方模式：检测是否有官方安装，没有但有WeGame则自动切到WeGame
+                var hasOfficial = SteamHelper.DetectCnWutheringWavesPaths()
+                    .Any(p => File.Exists(Path.Combine(p, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe")));
+                if (!hasOfficial && SteamHelper.DetectWeGameInstallPath() != null)
+                {
+                    rdoWeGame.Checked = true;
+                    AppendLog("已自动切换到 WeGame 模式（未检测到官方启动器版本）");
+                }
+            }
+
+            // 初始状态设置完成后再订阅事件，避免构造期间触发
             rdoOfficial.CheckedChanged += OnSourceChanged;
             rdoWeGame.CheckedChanged += OnSourceChanged;
         }
@@ -132,14 +150,91 @@ namespace WutheringWavesSteamHelper
                 AppendLog("[警告] 设置保存失败，下次启动将无法自动填入");
         }
 
+        private void OnContentResize(object? sender, EventArgs e)
+        {
+            int contentW = pnlContent.ClientSize.Width;
+            int cardW = Math.Max(contentW - 32, 200);
+
+            // 更新所有卡片和按钮宽度
+            foreach (Control c in pnlContent.Controls)
+            {
+                c.Width = cardW;
+            }
+
+            // 更新卡片内部宽度自适应控件
+            UpdateCardInnerWidths(cardW);
+
+            // 日志卡片高度：填充剩余空间
+            int logY = cardLogPanel.Top;
+            int available = pnlContent.ClientSize.Height - logY - 16;
+            if (available > 80)
+            {
+                cardLogPanel.Height = available;
+                txtLog.Size = new Size(cardW - 32, available - 46);
+            }
+        }
+
+        private void UpdateCardInnerWidths(int cardW)
+        {
+            int innerW = cardW - 32; // 左右各16内边距
+
+            // txtSteamId 占满内宽
+            txtSteamId.Width = innerW;
+
+            // btnFetchSteamDb 占满内宽
+            btnFetchSteamDb.Width = innerW;
+
+            // txtManifest 右侧对齐：从328到内宽右端
+            txtManifest.Width = innerW - 312;
+
+            // 路径输入框 + 按钮组：输入框宽 = innerW - 72 - 8 - 138 - 8 = innerW - 226
+            int pathTxtW = Math.Max(innerW - 226, 100);
+            txtSteamLibraryPath.Width = pathTxtW;
+            txtSteamInstallPath.Width = pathTxtW;
+
+            int browseX = 16 + pathTxtW + 8;
+            int autoX = browseX + 72 + 8;
+            btnBrowseLibrary.Left = browseX;
+            btnAutoDetectLibrary.Left = autoX;
+            btnBrowseSteam.Left = browseX;
+            btnAutoDetectSteam.Left = autoX;
+        }
+
         private void OnSourceChanged(object? sender, EventArgs e)
         {
-            if (!rdoWeGame.Checked) return;
-            var wegamePath = SteamHelper.DetectWeGameInstallPath();
-            if (wegamePath != null)
-                AppendLog($"已检测到 WeGame 鸣潮路径：{wegamePath}");
-            else
-                AppendLog("未检测到 WeGame 鸣潮安装，请确认已安装 WeGame 版鸣潮");
+            if (rdoWeGame.Checked)
+            {
+                // 切到 WeGame：检测是否安装
+                var wegamePath = SteamHelper.DetectWeGameInstallPath();
+                if (wegamePath != null)
+                {
+                    AppendLog($"已检测到 WeGame 鸣潮路径：{wegamePath}");
+                }
+                else
+                {
+                    AppendLog("未检测到 WeGame 鸣潮安装，已自动切回官方启动器模式");
+                    rdoOfficial.CheckedChanged -= OnSourceChanged;
+                    rdoWeGame.CheckedChanged -= OnSourceChanged;
+                    rdoOfficial.Checked = true;
+                    rdoOfficial.CheckedChanged += OnSourceChanged;
+                    rdoWeGame.CheckedChanged += OnSourceChanged;
+                }
+            }
+            else if (rdoOfficial.Checked)
+            {
+                // 切到官方：检测是否安装
+                var hasOfficial = SteamHelper.DetectCnWutheringWavesPaths()
+                    .Any(p => File.Exists(Path.Combine(p, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe")));
+                if (!hasOfficial)
+                {
+                    AppendLog("未检测到官方启动器版鸣潮安装，已自动切回 WeGame 模式");
+                    rdoOfficial.CheckedChanged -= OnSourceChanged;
+                    rdoWeGame.CheckedChanged -= OnSourceChanged;
+                    rdoWeGame.Checked = true;
+                    rdoOfficial.CheckedChanged += OnSourceChanged;
+                    rdoWeGame.CheckedChanged += OnSourceChanged;
+                }
+            }
         }
 
         private void BtnBrowseLibrary_Click(object? sender, EventArgs e)
