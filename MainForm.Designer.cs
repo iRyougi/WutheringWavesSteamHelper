@@ -1,44 +1,32 @@
-﻿namespace WutheringWavesSteamHelper
+namespace WutheringWavesSteamHelper
 {
     partial class MainForm
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(720, 665);
-            this.Text = "\u9e23\u6f6e Steam \u542f\u52a8\u52a9\u624b";
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(900, 620);
+            this.MinimumSize = new System.Drawing.Size(760, 600);
+            this.Text = "Steam 游戏启动助手";
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Font = new Font("Microsoft YaHei UI", 9F);
-            this.BackColor = Color.FromArgb(245, 247, 250);
+            this.BackColor = Color.FromArgb(243, 243, 243);
 
-            // Set application icon from embedded resource
             var iconStream = typeof(MainForm).Assembly.GetManifestResourceStream("WutheringWavesSteamHelper.ico");
             if (iconStream != null)
             {
@@ -46,277 +34,330 @@
                 iconStream.Dispose();
             }
 
-            // --- Color Palette ---
-            var panelBg = Color.White;
-            var borderColor = Color.FromArgb(218, 222, 230);
-            var accentColor = Color.FromArgb(59, 130, 246);
-            var accentHover = Color.FromArgb(37, 99, 235);
-            var successColor = Color.FromArgb(34, 139, 34);
-            var labelColor = Color.FromArgb(55, 65, 81);
-            var sectionTitleColor = Color.FromArgb(30, 41, 59);
-            var inputBg = Color.FromArgb(249, 250, 251);
-            var btnSecondaryBg = Color.FromArgb(241, 245, 249);
-            var btnSecondaryBorder = Color.FromArgb(203, 213, 225);
+            // ===== Sidebar (Dock=Left, Width=220) =====
+            pnlSidebar = new Panel();
+            pnlSidebar.Dock = DockStyle.Left;
+            pnlSidebar.Width = 220;
+            pnlSidebar.BackColor = Color.FromArgb(30, 42, 58);
 
-            // === Title Header Panel ===
-            var pnlHeader = new Panel();
-            pnlHeader.Location = new Point(0, 0);
-            pnlHeader.Size = new Size(720, 56);
-            pnlHeader.BackColor = Color.FromArgb(30, 41, 59);
+            var lblAppTitle = new Label();
+            lblAppTitle.Text = "Steam 游戏\n启动助手";
+            lblAppTitle.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            lblAppTitle.ForeColor = Color.White;
+            lblAppTitle.Location = new Point(16, 18);
+            lblAppTitle.AutoSize = true;
+            pnlSidebar.Controls.Add(lblAppTitle);
 
-            var lblTitle = new Label();
-            lblTitle.Text = "\u9e23\u6f6e Steam \u542f\u52a8\u52a9\u624b";
-            lblTitle.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(20, 13);
-            lblTitle.AutoSize = true;
-            pnlHeader.Controls.Add(lblTitle);
+            var divider = new Panel();
+            divider.Location = new Point(16, 76);
+            divider.Size = new Size(188, 1);
+            divider.BackColor = Color.FromArgb(55, 70, 90);
+            pnlSidebar.Controls.Add(divider);
+
+            pnlGameButtons = new Panel();
+            pnlGameButtons.Location = new Point(0, 86);
+            pnlGameButtons.Size = new Size(220, 600);
+            pnlGameButtons.BackColor = Color.Transparent;
+            pnlSidebar.Controls.Add(pnlGameButtons);
+
+            lblVersion = new Label();
+            lblVersion.Text = "v1.1.0";
+            lblVersion.Font = new Font("Microsoft YaHei UI", 8.5F);
+            lblVersion.ForeColor = Color.FromArgb(100, 120, 145);
+            lblVersion.Location = new Point(16, 16);
+            lblVersion.AutoSize = true;
+            lblVersion.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+            pnlSidebar.Controls.Add(lblVersion);
+
+            // ===== Right panel (Dock=Fill) =====
+            pnlRight = new Panel();
+            pnlRight.Dock = DockStyle.Fill;
+            pnlRight.BackColor = Color.FromArgb(243, 243, 243);
+
+            // ===== Header (Dock=Top, Height=56) =====
+            pnlHeader = new Panel();
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Height = 56;
+            pnlHeader.BackColor = Color.FromArgb(248, 249, 252);
+
+            lblGameTitle = new Label();
+            lblGameTitle.Text = "鸣潮";
+            lblGameTitle.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Bold);
+            lblGameTitle.ForeColor = Color.FromArgb(30, 41, 59);
+            lblGameTitle.Location = new Point(20, 14);
+            lblGameTitle.AutoSize = true;
+            pnlHeader.Controls.Add(lblGameTitle);
 
             btnHelp = new Button();
-            btnHelp.Text = "\u5e2e\u52a9";
-            btnHelp.Location = new Point(628, 12);
+            btnHelp.Text = "帮助";
+            btnHelp.Location = new Point(592, 12);
             btnHelp.Size = new Size(72, 32);
             btnHelp.Font = new Font("Microsoft YaHei UI", 9F);
-            btnHelp.BackColor = Color.FromArgb(51, 65, 85);
-            btnHelp.ForeColor = Color.FromArgb(203, 213, 225);
+            btnHelp.BackColor = Color.FromArgb(241, 245, 249);
+            btnHelp.ForeColor = Color.FromArgb(55, 65, 81);
             btnHelp.FlatStyle = FlatStyle.Flat;
-            btnHelp.FlatAppearance.BorderColor = Color.FromArgb(71, 85, 105);
+            btnHelp.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
             btnHelp.FlatAppearance.BorderSize = 1;
             btnHelp.Cursor = Cursors.Hand;
+            btnHelp.Anchor = AnchorStyles.Right | AnchorStyles.Top;
             btnHelp.Click += BtnHelp_Click;
             pnlHeader.Controls.Add(btnHelp);
 
-            // ==================== Path Settings Group ====================
-            var grpPaths = new GroupBox();
-            grpPaths.Text = "  \u8def\u5f84\u8bbe\u7f6e  ";
-            grpPaths.Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold);
-            grpPaths.ForeColor = sectionTitleColor;
-            grpPaths.Location = new Point(16, 70);
-            grpPaths.Size = new Size(688, 180);
-            grpPaths.BackColor = panelBg;
+            var headerDivider = new Panel();
+            headerDivider.Dock = DockStyle.Bottom;
+            headerDivider.Height = 1;
+            headerDivider.BackColor = Color.FromArgb(218, 222, 230);
+            pnlHeader.Controls.Add(headerDivider);
 
-            // --- SteamLibrary Path ---
-            lblSteamLibrary = new Label();
-            lblSteamLibrary.Text = "SteamLibrary \u8def\u5f84\uff1a";
-            lblSteamLibrary.Font = new Font("Microsoft YaHei UI", 9F);
-            lblSteamLibrary.ForeColor = labelColor;
-            lblSteamLibrary.Location = new Point(18, 28);
-            lblSteamLibrary.AutoSize = true;
+            // ===== Content Area (Dock=Fill, AutoScroll=true) =====
+            pnlContent = new Panel();
+            pnlContent.Dock = DockStyle.Fill;
+            pnlContent.BackColor = Color.FromArgb(243, 243, 243);
+            pnlContent.AutoScroll = true;
+            pnlContent.Resize += OnContentResize;
 
-            txtSteamLibraryPath = new TextBox();
-            txtSteamLibraryPath.Location = new Point(18, 50);
-            txtSteamLibraryPath.Size = new Size(440, 25);
-            txtSteamLibraryPath.ReadOnly = true;
-            txtSteamLibraryPath.BackColor = inputBg;
-            txtSteamLibraryPath.BorderStyle = BorderStyle.FixedSingle;
-            txtSteamLibraryPath.Font = new Font("Microsoft YaHei UI", 9F);
+            // --- 设置卡片 (y=16, h=72) ---
+            var cardToggle = CreateCard(new Point(16, 16), new Size(648, 72));
+            cardToggle.Controls.Add(CreateSectionTitle("设置", new Point(16, 14)));
 
-            btnBrowseLibrary = new Button();
-            btnBrowseLibrary.Text = "\u6d4f\u89c8...";
-            btnBrowseLibrary.Location = new Point(470, 48);
-            btnBrowseLibrary.Size = new Size(90, 30);
-            btnBrowseLibrary.FlatStyle = FlatStyle.Flat;
-            btnBrowseLibrary.BackColor = btnSecondaryBg;
-            btnBrowseLibrary.ForeColor = labelColor;
-            btnBrowseLibrary.FlatAppearance.BorderColor = btnSecondaryBorder;
-            btnBrowseLibrary.Font = new Font("Microsoft YaHei UI", 9F);
-            btnBrowseLibrary.Cursor = Cursors.Hand;
+            cardToggle.Controls.Add(CreateLabel("国服鸣潮版本：", new Point(16, 44)));
+
+            rdoOfficial = new RadioButton();
+            rdoOfficial.Text = "官方启动器";
+            rdoOfficial.Font = new Font("Microsoft YaHei UI", 9F);
+            rdoOfficial.ForeColor = Color.FromArgb(30, 41, 59);
+            rdoOfficial.Location = new Point(160, 42);
+            rdoOfficial.AutoSize = true;
+            rdoOfficial.Checked = true;
+            rdoOfficial.Cursor = Cursors.Hand;
+            cardToggle.Controls.Add(rdoOfficial);
+
+            rdoWeGame = new RadioButton();
+            rdoWeGame.Text = "WeGame";
+            rdoWeGame.Font = new Font("Microsoft YaHei UI", 9F);
+            rdoWeGame.ForeColor = Color.FromArgb(30, 41, 59);
+            rdoWeGame.Location = new Point(300, 42);
+            rdoWeGame.AutoSize = true;
+            rdoWeGame.Cursor = Cursors.Hand;
+            cardToggle.Controls.Add(rdoWeGame);
+
+            pnlContent.Controls.Add(cardToggle);
+
+            // --- 路径设置卡片 (y=100, h=172) ---
+            var cardPaths = CreateCard(new Point(16, 100), new Size(648, 172));
+            cardPaths.Controls.Add(CreateSectionTitle("路径设置", new Point(16, 14)));
+
+            lblSteamLibrary = CreateLabel("SteamLibrary 路径：", new Point(16, 44));
+            cardPaths.Controls.Add(lblSteamLibrary);
+
+            txtSteamLibraryPath = CreateTextBox(new Point(16, 64), 390, true);
+            cardPaths.Controls.Add(txtSteamLibraryPath);
+
+            btnBrowseLibrary = CreateSecondaryButton("浏览...", new Point(414, 64), new Size(72, 30));
             btnBrowseLibrary.Click += BtnBrowseLibrary_Click;
+            cardPaths.Controls.Add(btnBrowseLibrary);
 
-            btnAutoDetectLibrary = new Button();
-            btnAutoDetectLibrary.Text = "\u81ea\u52a8\u8bc6\u522b";
-            btnAutoDetectLibrary.Location = new Point(572, 48);
-            btnAutoDetectLibrary.Size = new Size(96, 30);
-            btnAutoDetectLibrary.FlatStyle = FlatStyle.Flat;
-            btnAutoDetectLibrary.BackColor = accentColor;
-            btnAutoDetectLibrary.ForeColor = Color.White;
-            btnAutoDetectLibrary.FlatAppearance.BorderSize = 0;
-            btnAutoDetectLibrary.Font = new Font("Microsoft YaHei UI", 9F);
-            btnAutoDetectLibrary.Cursor = Cursors.Hand;
+            btnAutoDetectLibrary = CreatePrimaryButton("自动识别", new Point(494, 64), new Size(138, 30));
             btnAutoDetectLibrary.Click += BtnAutoDetectLibrary_Click;
+            cardPaths.Controls.Add(btnAutoDetectLibrary);
 
-            // --- Steam Install Path ---
-            lblSteamPath = new Label();
-            lblSteamPath.Text = "Steam \u5b89\u88c5\u8def\u5f84\uff1a";
-            lblSteamPath.Font = new Font("Microsoft YaHei UI", 9F);
-            lblSteamPath.ForeColor = labelColor;
-            lblSteamPath.Location = new Point(18, 96);
-            lblSteamPath.AutoSize = true;
+            lblSteamPath = CreateLabel("Steam 安装路径：", new Point(16, 104));
+            cardPaths.Controls.Add(lblSteamPath);
 
-            txtSteamInstallPath = new TextBox();
-            txtSteamInstallPath.Location = new Point(18, 118);
-            txtSteamInstallPath.Size = new Size(440, 25);
-            txtSteamInstallPath.ReadOnly = true;
-            txtSteamInstallPath.BackColor = inputBg;
-            txtSteamInstallPath.BorderStyle = BorderStyle.FixedSingle;
-            txtSteamInstallPath.Font = new Font("Microsoft YaHei UI", 9F);
+            txtSteamInstallPath = CreateTextBox(new Point(16, 124), 390, true);
+            cardPaths.Controls.Add(txtSteamInstallPath);
 
-            btnBrowseSteam = new Button();
-            btnBrowseSteam.Text = "\u6d4f\u89c8...";
-            btnBrowseSteam.Location = new Point(470, 116);
-            btnBrowseSteam.Size = new Size(90, 30);
-            btnBrowseSteam.FlatStyle = FlatStyle.Flat;
-            btnBrowseSteam.BackColor = btnSecondaryBg;
-            btnBrowseSteam.ForeColor = labelColor;
-            btnBrowseSteam.FlatAppearance.BorderColor = btnSecondaryBorder;
-            btnBrowseSteam.Font = new Font("Microsoft YaHei UI", 9F);
-            btnBrowseSteam.Cursor = Cursors.Hand;
+            btnBrowseSteam = CreateSecondaryButton("浏览...", new Point(414, 124), new Size(72, 30));
             btnBrowseSteam.Click += BtnBrowseSteam_Click;
+            cardPaths.Controls.Add(btnBrowseSteam);
 
-            btnAutoDetectSteam = new Button();
-            btnAutoDetectSteam.Text = "\u81ea\u52a8\u8bc6\u522b";
-            btnAutoDetectSteam.Location = new Point(572, 116);
-            btnAutoDetectSteam.Size = new Size(96, 30);
-            btnAutoDetectSteam.FlatStyle = FlatStyle.Flat;
-            btnAutoDetectSteam.BackColor = accentColor;
-            btnAutoDetectSteam.ForeColor = Color.White;
-            btnAutoDetectSteam.FlatAppearance.BorderSize = 0;
-            btnAutoDetectSteam.Font = new Font("Microsoft YaHei UI", 9F);
-            btnAutoDetectSteam.Cursor = Cursors.Hand;
+            btnAutoDetectSteam = CreatePrimaryButton("自动识别", new Point(494, 124), new Size(138, 30));
             btnAutoDetectSteam.Click += BtnAutoDetectSteam_Click;
+            cardPaths.Controls.Add(btnAutoDetectSteam);
 
-            grpPaths.Controls.AddRange(new Control[]
-            {
-                lblSteamLibrary, txtSteamLibraryPath, btnBrowseLibrary, btnAutoDetectLibrary,
-                lblSteamPath, txtSteamInstallPath, btnBrowseSteam, btnAutoDetectSteam
-            });
+            pnlContent.Controls.Add(cardPaths);
 
-            // ==================== Account & Build Info Group ====================
-            var grpInfo = new GroupBox();
-            grpInfo.Text = "  \u8d26\u53f7\u4e0e\u7248\u672c\u4fe1\u606f  ";
-            grpInfo.Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold);
-            grpInfo.ForeColor = sectionTitleColor;
-            grpInfo.Location = new Point(16, 260);
-            grpInfo.Size = new Size(688, 188);
-            grpInfo.BackColor = panelBg;
+            // --- 账号与版本信息卡片 (y=284, h=200) ---
+            var cardInfo = CreateCard(new Point(16, 284), new Size(648, 200));
+            cardInfo.Controls.Add(CreateSectionTitle("账号与版本信息", new Point(16, 14)));
 
-            // --- Steam ID ---
-            lblSteamId = new Label();
-            lblSteamId.Text = "Steam ID\uff08SteamID64\uff0c\u4f8b\u5982 76561198422904257\uff09\uff1a";
-            lblSteamId.Font = new Font("Microsoft YaHei UI", 9F);
-            lblSteamId.ForeColor = labelColor;
-            lblSteamId.Location = new Point(18, 28);
-            lblSteamId.AutoSize = true;
+            lblSteamId = CreateLabel("Steam ID（SteamID64，例如 76561198422904257）：", new Point(16, 44));
+            cardInfo.Controls.Add(lblSteamId);
 
-            txtSteamId = new TextBox();
-            txtSteamId.Location = new Point(18, 50);
-            txtSteamId.Size = new Size(650, 25);
-            txtSteamId.BorderStyle = BorderStyle.FixedSingle;
-            txtSteamId.Font = new Font("Microsoft YaHei UI", 9F);
+            txtSteamId = CreateTextBox(new Point(16, 64), 616, false);
+            cardInfo.Controls.Add(txtSteamId);
 
-            // --- Build ID & Manifest ---
-            lblBuildId = new Label();
-            lblBuildId.Text = "Build ID\uff1a";
-            lblBuildId.Font = new Font("Microsoft YaHei UI", 9F);
-            lblBuildId.ForeColor = labelColor;
-            lblBuildId.Location = new Point(18, 90);
-            lblBuildId.AutoSize = true;
+            lblBuildId = CreateLabel("Build ID：", new Point(16, 104));
+            cardInfo.Controls.Add(lblBuildId);
 
-            txtBuildId = new TextBox();
-            txtBuildId.Location = new Point(18, 112);
-            txtBuildId.Size = new Size(290, 25);
-            txtBuildId.ReadOnly = true;
-            txtBuildId.BackColor = inputBg;
-            txtBuildId.BorderStyle = BorderStyle.FixedSingle;
-            txtBuildId.Font = new Font("Microsoft YaHei UI", 9F);
+            txtBuildId = CreateTextBox(new Point(16, 124), 296, true);
+            cardInfo.Controls.Add(txtBuildId);
 
-            lblManifest = new Label();
-            lblManifest.Text = "Manifest ID\uff1a";
-            lblManifest.Font = new Font("Microsoft YaHei UI", 9F);
-            lblManifest.ForeColor = labelColor;
-            lblManifest.Location = new Point(340, 90);
-            lblManifest.AutoSize = true;
+            lblManifest = CreateLabel("Manifest ID：", new Point(328, 104));
+            cardInfo.Controls.Add(lblManifest);
 
-            txtManifest = new TextBox();
-            txtManifest.Location = new Point(340, 112);
-            txtManifest.Size = new Size(328, 25);
-            txtManifest.ReadOnly = true;
-            txtManifest.BackColor = inputBg;
-            txtManifest.BorderStyle = BorderStyle.FixedSingle;
-            txtManifest.Font = new Font("Microsoft YaHei UI", 9F);
+            txtManifest = CreateTextBox(new Point(328, 124), 304, true);
+            cardInfo.Controls.Add(txtManifest);
 
-            btnFetchSteamDb = new Button();
-            btnFetchSteamDb.Text = "\u4ece SteamDB \u83b7\u53d6 BuildID \u548c Manifest";
-            btnFetchSteamDb.Location = new Point(18, 144);
-            btnFetchSteamDb.Size = new Size(290, 28);
-            btnFetchSteamDb.FlatStyle = FlatStyle.Flat;
-            btnFetchSteamDb.BackColor = btnSecondaryBg;
-            btnFetchSteamDb.ForeColor = labelColor;
-            btnFetchSteamDb.FlatAppearance.BorderColor = btnSecondaryBorder;
-            btnFetchSteamDb.Font = new Font("Microsoft YaHei UI", 9F);
-            btnFetchSteamDb.Cursor = Cursors.Hand;
+            btnFetchSteamDb = CreateSecondaryButton("从 SteamDB 获取 BuildID 和 Manifest", new Point(16, 162), new Size(616, 30));
             btnFetchSteamDb.Click += BtnFetchSteamDb_Click;
+            cardInfo.Controls.Add(btnFetchSteamDb);
 
-            grpInfo.Controls.AddRange(new Control[]
-            {
-                lblSteamId, txtSteamId,
-                lblBuildId, txtBuildId, lblManifest, txtManifest, btnFetchSteamDb
-            });
+            pnlContent.Controls.Add(cardInfo);
 
-            // ==================== Generate Button ====================
+            // --- 操作按钮区 ---
             btnGenerate = new Button();
-            btnGenerate.Text = "\u751f\u6210\u914d\u7f6e\u5e76\u542f\u7528 Steam \u542f\u52a8";
-            btnGenerate.Location = new Point(16, 456);
-            btnGenerate.Size = new Size(688, 48);
-            btnGenerate.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
-            btnGenerate.BackColor = successColor;
+            btnGenerate.Text = "生成配置并启用 Steam 启动";
+            btnGenerate.Location = new Point(16, 496);
+            btnGenerate.Size = new Size(648, 44);
+            btnGenerate.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            btnGenerate.BackColor = Color.FromArgb(34, 139, 34);
             btnGenerate.ForeColor = Color.White;
             btnGenerate.FlatStyle = FlatStyle.Flat;
             btnGenerate.FlatAppearance.BorderSize = 0;
             btnGenerate.Cursor = Cursors.Hand;
             btnGenerate.Click += BtnGenerate_Click;
+            pnlContent.Controls.Add(btnGenerate);
 
-            // ==================== Launch Command Button ====================
             btnLaunchCommand = new Button();
-            btnLaunchCommand.Text = "\u641c\u7d22\u56fd\u670d\u9e23\u6f6e\u5e76\u751f\u6210\u542f\u52a8\u547d\u4ee4";
-            btnLaunchCommand.Location = new Point(16, 512);
-            btnLaunchCommand.Size = new Size(688, 48);
-            btnLaunchCommand.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
-            btnLaunchCommand.BackColor = accentColor;
+            btnLaunchCommand.Text = "搜索国服鸣潮并生成启动命令";
+            btnLaunchCommand.Location = new Point(16, 552);
+            btnLaunchCommand.Size = new Size(648, 44);
+            btnLaunchCommand.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            btnLaunchCommand.BackColor = Color.FromArgb(59, 130, 246);
             btnLaunchCommand.ForeColor = Color.White;
             btnLaunchCommand.FlatStyle = FlatStyle.Flat;
             btnLaunchCommand.FlatAppearance.BorderSize = 0;
             btnLaunchCommand.Cursor = Cursors.Hand;
             btnLaunchCommand.Click += BtnLaunchCommand_Click;
+            pnlContent.Controls.Add(btnLaunchCommand);
 
-            // ==================== Log Group ====================
-            var grpLog = new GroupBox();
-            grpLog.Text = "  \u8fd0\u884c\u65e5\u5fd7  ";
-            grpLog.Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold);
-            grpLog.ForeColor = sectionTitleColor;
-            grpLog.Location = new Point(16, 568);
-            grpLog.Size = new Size(688, 98);
-            grpLog.BackColor = panelBg;
+            btnOpenLauncher = new Button();
+            btnOpenLauncher.Text = "打开官方启动器";
+            btnOpenLauncher.Location = new Point(16, 608);
+            btnOpenLauncher.Size = new Size(648, 44);
+            btnOpenLauncher.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            btnOpenLauncher.BackColor = Color.FromArgb(100, 116, 139);
+            btnOpenLauncher.ForeColor = Color.White;
+            btnOpenLauncher.FlatStyle = FlatStyle.Flat;
+            btnOpenLauncher.FlatAppearance.BorderSize = 0;
+            btnOpenLauncher.Cursor = Cursors.Hand;
+            btnOpenLauncher.Click += BtnOpenLauncher_Click;
+            pnlContent.Controls.Add(btnOpenLauncher);
+
+            // --- 日志卡片 (y=664, 高度自适应) ---
+            cardLogPanel = CreateCard(new Point(16, 664), new Size(648, 120));
+            cardLogPanel.Controls.Add(CreateSectionTitle("运行日志", new Point(16, 14)));
 
             lblLog = new Label();
             lblLog.Visible = false;
 
             txtLog = new TextBox();
-            txtLog.Location = new Point(18, 24);
-            txtLog.Size = new Size(650, 62);
+            txtLog.Location = new Point(16, 38);
+            txtLog.Size = new Size(616, 64);
             txtLog.Multiline = true;
             txtLog.ReadOnly = true;
             txtLog.ScrollBars = ScrollBars.Vertical;
             txtLog.BackColor = Color.FromArgb(248, 250, 252);
             txtLog.BorderStyle = BorderStyle.FixedSingle;
             txtLog.Font = new Font("Consolas", 8.5F);
+            cardLogPanel.Controls.Add(txtLog);
+            cardLogPanel.Controls.Add(lblLog);
 
-            grpLog.Controls.AddRange(new Control[] { txtLog });
+            pnlContent.Controls.Add(cardLogPanel);
 
-            // Add controls to form
-            this.Controls.AddRange(new Control[]
-            {
-                pnlHeader,
-                grpPaths,
-                grpInfo,
-                btnGenerate,
-                btnLaunchCommand,
-                grpLog,
-                lblLog
-            });
+            // ===== Assemble =====
+            pnlRight.Controls.Add(pnlContent);
+            pnlRight.Controls.Add(pnlHeader);
+
+            this.Controls.Add(pnlRight);
+            this.Controls.Add(pnlSidebar);
+        }
+
+        private Panel CreateCard(Point location, Size size)
+        {
+            var card = new Panel();
+            card.Location = location;
+            card.Size = size;
+            card.BackColor = Color.White;
+            return card;
+        }
+
+        private Label CreateSectionTitle(string text, Point location)
+        {
+            var lbl = new Label();
+            lbl.Text = text;
+            lbl.Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold);
+            lbl.ForeColor = Color.FromArgb(30, 41, 59);
+            lbl.Location = location;
+            lbl.AutoSize = true;
+            return lbl;
+        }
+
+        private Label CreateLabel(string text, Point location)
+        {
+            var lbl = new Label();
+            lbl.Text = text;
+            lbl.Font = new Font("Microsoft YaHei UI", 9F);
+            lbl.ForeColor = Color.FromArgb(55, 65, 81);
+            lbl.Location = location;
+            lbl.AutoSize = true;
+            return lbl;
+        }
+
+        private TextBox CreateTextBox(Point location, int width, bool readOnly)
+        {
+            var txt = new TextBox();
+            txt.Location = location;
+            txt.Size = new Size(width, 28);
+            txt.ReadOnly = readOnly;
+            txt.BackColor = readOnly ? Color.FromArgb(249, 250, 251) : Color.White;
+            txt.BorderStyle = BorderStyle.FixedSingle;
+            txt.Font = new Font("Microsoft YaHei UI", 9F);
+            return txt;
+        }
+
+        private Button CreatePrimaryButton(string text, Point location, Size size)
+        {
+            var btn = new Button();
+            btn.Text = text;
+            btn.Location = location;
+            btn.Size = size;
+            btn.Font = new Font("Microsoft YaHei UI", 9F);
+            btn.BackColor = Color.FromArgb(59, 130, 246);
+            btn.ForeColor = Color.White;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Cursor = Cursors.Hand;
+            return btn;
+        }
+
+        private Button CreateSecondaryButton(string text, Point location, Size size)
+        {
+            var btn = new Button();
+            btn.Text = text;
+            btn.Location = location;
+            btn.Size = size;
+            btn.Font = new Font("Microsoft YaHei UI", 8);
+            btn.BackColor = Color.FromArgb(241, 245, 249);
+            btn.ForeColor = Color.FromArgb(55, 65, 81);
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
+            btn.FlatAppearance.BorderSize = 1;
+            btn.Cursor = Cursors.Hand;
+            return btn;
         }
 
         #endregion
+
+        private Panel pnlSidebar;
+        private Panel pnlGameButtons;
+        private Panel pnlRight;
+        private Panel pnlHeader;
+        private Panel pnlContent;
+        private Panel cardLogPanel;
+        private Label lblGameTitle;
+        private Label lblVersion;
 
         private Label lblSteamLibrary;
         private TextBox txtSteamLibraryPath;
@@ -338,9 +379,12 @@
         private Button btnFetchSteamDb;
 
         private Button btnGenerate;
-
         private Button btnHelp;
         private Button btnLaunchCommand;
+        private Button btnOpenLauncher;
+
+        private RadioButton rdoOfficial;
+        private RadioButton rdoWeGame;
 
         private Label lblLog;
         private TextBox txtLog;
