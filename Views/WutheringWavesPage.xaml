@@ -51,8 +51,7 @@
             <StackPanel Spacing="12">
                 <TextBlock Text="游戏版本信息" FontSize="20" FontWeight="SemiBold"/>
 
-                <Button Content="从 SteamDB 获取 BuildID 和 Manifest"
-                        Command="{Binding FetchSteamDbCommand}"
+                <Button Command="{Binding FetchSteamDbCommand}"
                         HorizontalAlignment="Stretch">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal" Spacing="8">

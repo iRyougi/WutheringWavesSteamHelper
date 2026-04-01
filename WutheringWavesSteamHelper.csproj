@@ -13,6 +13,7 @@
     <Version>1.2.0</Version>
     <Company>KAMITSUBAKI STUDIO</Company>
     <ApplicationIcon>Assets\Icons\WutheringWavesSteamHelper.ico</ApplicationIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>

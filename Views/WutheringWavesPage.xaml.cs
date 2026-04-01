@@ -19,7 +19,7 @@ public sealed partial class WutheringWavesPage : Page
     private async void BrowseSteam_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         var picker = new FolderPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.Current.m_window);
+        var hwnd = WindowNative.GetWindowHandle((App.Current as App)!.m_window);
         InitializeWithWindow.Initialize(picker, hwnd);
         picker.FileTypeFilter.Add("*");
 
@@ -34,7 +34,7 @@ public sealed partial class WutheringWavesPage : Page
     private async void BrowseLibrary_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         var picker = new FolderPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.Current.m_window);
+        var hwnd = WindowNative.GetWindowHandle((App.Current as App)!.m_window);
         InitializeWithWindow.Initialize(picker, hwnd);
         picker.FileTypeFilter.Add("*");
 
