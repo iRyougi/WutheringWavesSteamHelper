@@ -44,4 +44,42 @@ public sealed partial class WutheringWavesPage : Page
             ViewModel.AddLog($"已选择 SteamLibrary 路径：{folder.Path}");
         }
     }
+
+    private async void GenerateLaunchCommand_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var command = ViewModel.GenerateLaunchCommandText();
+        if (command != null)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Steam 启动命令",
+                Content = new TextBox
+                {
+                    Text = command,
+                    IsReadOnly = true,
+                    TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap,
+                    MinHeight = 100
+                },
+                CloseButtonText = "关闭",
+                XamlRoot = this.XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+        else
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "错误",
+                Content = "未找到国服鸣潮安装路径",
+                CloseButtonText = "确定",
+                XamlRoot = this.XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+    }
+
+    private void OpenLauncher_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        ViewModel.OpenLauncher();
+    }
 }

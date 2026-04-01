@@ -84,6 +84,17 @@
                 </RadioButtons>
             </StackPanel>
 
+            <!-- 操作按钮 -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="操作" FontSize="20" FontWeight="SemiBold"/>
+                <Button Content="生成配置文件" Command="{x:Bind ViewModel.GenerateConfigCommand}"
+                        HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
+                <Button Content="生成启动命令" Click="GenerateLaunchCommand_Click"
+                        HorizontalAlignment="Stretch"/>
+                <Button Content="打开官方启动器" Click="OpenLauncher_Click"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
             <!-- 日志 -->
             <StackPanel Spacing="12">
                 <TextBlock Text="操作日志" FontSize="20" FontWeight="SemiBold"/>
