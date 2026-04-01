@@ -1,7 +1,7 @@
 using Microsoft.Win32;
 using System.Text.Json;
 
-namespace WutheringWavesSteamHelper.WinUI.Services;
+namespace WutheringWavesSteamHelper.Services;
 
 public static class SteamHelper
 {

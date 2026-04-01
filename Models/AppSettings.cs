@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace WutheringWavesSteamHelper.WinUI.Models;
+namespace WutheringWavesSteamHelper.Models;
 
 public class AppSettings
 {

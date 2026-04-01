@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using WutheringWavesSteamHelper.WinUI.Models;
-using WutheringWavesSteamHelper.WinUI.Services;
+using WutheringWavesSteamHelper.Models;
+using WutheringWavesSteamHelper.Services;
 
-namespace WutheringWavesSteamHelper.WinUI.ViewModels;
+namespace WutheringWavesSteamHelper.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {

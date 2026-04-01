@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace WutheringWavesSteamHelper.WinUI;
+namespace WutheringWavesSteamHelper;
 
 public sealed partial class MainWindow : Window
 {

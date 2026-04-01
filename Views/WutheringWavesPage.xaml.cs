@@ -1,9 +1,9 @@
 using Microsoft.UI.Xaml.Controls;
-using WutheringWavesSteamHelper.WinUI.ViewModels;
+using WutheringWavesSteamHelper.ViewModels;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
-namespace WutheringWavesSteamHelper.WinUI.Views;
+namespace WutheringWavesSteamHelper.Views;
 
 public sealed partial class WutheringWavesPage : Page
 {

@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 
-namespace WutheringWavesSteamHelper.WinUI;
+namespace WutheringWavesSteamHelper;
 
 public partial class App : Application
 {
