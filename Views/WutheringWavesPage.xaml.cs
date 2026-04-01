@@ -13,6 +13,7 @@ public sealed partial class WutheringWavesPage : Page
     {
         InitializeComponent();
         ViewModel = new MainViewModel();
+        DataContext = ViewModel;
     }
 
     private async void BrowseSteam_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
