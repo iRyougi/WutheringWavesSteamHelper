@@ -1,4 +1,6 @@
-namespace WutheringWavesSteamHelper.Models;
+using System.Collections.Generic;
+
+namespace WetheringWavesSteamHelper_WinUI.Models;
 
 public class GameConfig
 {
@@ -31,6 +33,6 @@ public static class GameConfigs
         {
             Name = "敬请期待",
             IsPlaceholder = true
-        },
+        }
     ];
 }

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WetheringWavesSteamHelper_WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WetheringWavesSteamHelper_WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,40 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Window
-    x:Class="WutheringWavesSteamHelper.MainWindow"
+    x:Class="WetheringWavesSteamHelper_WinUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="鸣潮 Steam 助手 v1.2.0">
+    Title="鸣潮 Steam 助手 v2.0.0">
 
-    <NavigationView x:Name="NavView"
-                    PaneDisplayMode="Left"
-                    IsBackButtonVisible="Collapsed"
-                    IsSettingsVisible="False"
-                    IsPaneToggleButtonVisible="False"
-                    OpenPaneLength="180"
-                    SelectionChanged="NavView_SelectionChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <NavigationView.MenuItems>
-            <NavigationViewItem Content="鸣潮" Tag="wuwa">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE7FC;"/>
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem Content="敬请期待" IsEnabled="False">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE8F1;"/>
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-        </NavigationView.MenuItems>
+        <Grid Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+            <TextBlock Text="鸣潮 Steam 助手"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="16,0"/>
+        </Grid>
 
-        <NavigationView.PaneFooter>
-            <TextBlock Text="v1.2.0"
-                       Margin="16,8"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                       FontSize="12"/>
-        </NavigationView.PaneFooter>
+        <NavigationView x:Name="NavView"
+                        Grid.Row="1"
+                        IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        PaneDisplayMode="Left"
+                        OpenPaneLength="240"
+                        CompactPaneLength="48"
+                        IsPaneOpen="False"
+                        SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="鸣潮" Tag="WutheringWaves">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7FC;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="敬请期待" Tag="Placeholder" IsEnabled="False">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE823;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
 
-        <Frame x:Name="ContentFrame"/>
-    </NavigationView>
+            <Frame x:Name="ContentFrame"/>
+        </NavigationView>
+    </Grid>
 </Window>
