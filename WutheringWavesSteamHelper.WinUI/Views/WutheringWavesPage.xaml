@@ -1,0 +1,110 @@
+<Page
+    x:Class="WutheringWavesSteamHelper.WinUI.Views.WutheringWavesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Padding="24" Spacing="16">
+
+            <!-- Steam 路径配置 -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="Steam 配置" FontSize="20" FontWeight="SemiBold"/>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Steam 安装路径"/>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txtSteamInstallPath" Text="{x:Bind ViewModel.SteamInstallPath, Mode=TwoWay}"/>
+                        <Button Grid.Column="1" Content="浏览" Click="BrowseSteam_Click"/>
+                        <Button Grid.Column="2" Content="自动检测" Command="{x:Bind ViewModel.AutoDetectSteamCommand}"/>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="SteamLibrary 路径"/>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txtSteamLibraryPath" Text="{x:Bind ViewModel.SteamLibraryPath, Mode=TwoWay}"/>
+                        <Button Grid.Column="1" Content="浏览" Click="BrowseLibrary_Click"/>
+                        <Button Grid.Column="2" Content="自动检测" Command="{x:Bind ViewModel.AutoDetectLibraryCommand}"/>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Steam ID (SteamID64)"/>
+                    <TextBox Text="{x:Bind ViewModel.SteamId, Mode=TwoWay}" PlaceholderText="输入你的 SteamID64"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- BuildID 和 Manifest -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="游戏版本信息" FontSize="20" FontWeight="SemiBold"/>
+
+                <Button Content="从 SteamDB 获取 BuildID 和 Manifest"
+                        Command="{x:Bind ViewModel.FetchSteamDbCommand}"
+                        HorizontalAlignment="Stretch">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <ProgressRing IsActive="{x:Bind ViewModel.IsFetching, Mode=OneWay}"
+                                          Width="16" Height="16"
+                                          Visibility="{x:Bind ViewModel.IsFetching, Mode=OneWay}"/>
+                            <TextBlock Text="从 SteamDB 获取 BuildID 和 Manifest"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Build ID"/>
+                    <TextBox Text="{x:Bind ViewModel.BuildId, Mode=TwoWay}" PlaceholderText="自动获取或手动输入"/>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Manifest ID"/>
+                    <TextBox Text="{x:Bind ViewModel.Manifest, Mode=TwoWay}" PlaceholderText="自动获取或手动输入"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 国服游戏源选择 -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="国服游戏源" FontSize="20" FontWeight="SemiBold"/>
+                <RadioButtons>
+                    <RadioButton Content="官方启动器" IsChecked="{x:Bind ViewModel.IsOfficial, Mode=TwoWay}"/>
+                    <RadioButton Content="WeGame" IsChecked="{x:Bind ViewModel.IsWeGame, Mode=TwoWay}"/>
+                </RadioButtons>
+            </StackPanel>
+
+            <!-- 日志 -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="操作日志" FontSize="20" FontWeight="SemiBold"/>
+                <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Height="200">
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.Logs, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <TextBlock Text="{x:Bind}" FontFamily="Consolas" FontSize="12" Margin="8,2"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
+
