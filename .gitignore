@@ -367,3 +367,5 @@ FodyWeavers.xsd
 /Docs/*.acf
 /Docs/apprequirement.md
 .claude
+*.iss
+Output/
