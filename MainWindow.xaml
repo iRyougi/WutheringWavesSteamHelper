@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="鸣潮 Steam 助手 v2.0.0">
+    Title="鸣潮 Steam 助手">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -14,8 +14,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- 顶部标题栏 -->
         <Grid Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-            <TextBlock Text="鸣潮 Steam 助手"
+            <TextBlock x:Name="txtTitleBar"
                        FontSize="20"
                        FontWeight="SemiBold"
                        VerticalAlignment="Center"
@@ -27,10 +28,11 @@
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
                         PaneDisplayMode="Left"
-                        OpenPaneLength="240"
+                        OpenPaneLength="150"
                         CompactPaneLength="48"
-                        IsPaneOpen="False"
+                        IsPaneOpen="True"
                         SelectionChanged="NavView_SelectionChanged">
+
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="鸣潮" Tag="WutheringWaves">
                     <NavigationViewItem.Icon>
@@ -43,6 +45,15 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
+
+            <!-- 底部设置入口 -->
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="设置" Tag="Settings">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
 
             <Frame x:Name="ContentFrame"/>
         </NavigationView>

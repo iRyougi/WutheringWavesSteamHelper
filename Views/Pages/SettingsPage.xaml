@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WetheringWavesSteamHelper_WinUI.Views.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
+
+            <!-- 页面标题 -->
+            <TextBlock Text="设置" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+            <!-- 开发者选项 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="开发者选项" FontSize="16" FontWeight="SemiBold"/>
+
+                    <!-- 开发者模式 -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="开发者模式" FontSize="14" FontWeight="Medium"/>
+                            <TextBlock Text="启用后将显示额外的调试信息和高级功能"
+                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <ToggleSwitch x:Name="tglDeveloperMode"
+                                      Grid.Column="1"
+                                      OffContent="" OnContent=""
+                                      Toggled="DeveloperMode_Toggled"/>
+                    </Grid>
+
+                    <NavigationViewItemSeparator/>
+
+                    <!-- Debug 模式 -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Debug 模式" FontSize="14" FontWeight="Medium"/>
+                            <TextBlock Text="启用后将在日志中输出详细的调试信息"
+                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <ToggleSwitch x:Name="tglDebugMode"
+                                      Grid.Column="1"
+                                      OffContent="" OnContent=""
+                                      Toggled="DebugMode_Toggled"/>
+                    </Grid>
+
+                    <!-- 开发者模式才显示的额外选项 -->
+                    <Border x:Name="developerOptionsPanel"
+                            Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            CornerRadius="6" Padding="12"
+                            Visibility="Collapsed">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="开发者工具" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                <Run Text="设置文件路径："/>
+                                <Run x:Name="runSettingsPath" FontFamily="Consolas"/>
+                            </TextBlock>
+                            <Button Content="打开设置文件所在目录" Click="OpenSettingsDir_Click"
+                                    FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- 语言设置（预留） -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="语言 / Language" FontSize="16" FontWeight="SemiBold"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="界面语言" FontSize="14" FontWeight="Medium"/>
+                            <TextBlock Text="更改后需要重启应用才能生效（功能开发中）"
+                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <ComboBox x:Name="cmbLanguage"
+                                  Grid.Column="1"
+                                  MinWidth="160"
+                                  IsEnabled="False"
+                                  SelectionChanged="Language_SelectionChanged">
+                            <ComboBoxItem Tag="zh-CN" Content="简体中文" IsSelected="True"/>
+                            <ComboBoxItem Tag="zh-TW" Content="繁體中文"/>
+                            <ComboBoxItem Tag="en-US" Content="English"/>
+                            <ComboBoxItem Tag="ja-JP" Content="日本語"/>
+                        </ComboBox>
+                    </Grid>
+                    <InfoBar x:Name="languageInfoBar"
+                             Severity="Informational"
+                             Title="多语言支持正在开发中"
+                             Message="目前仅支持简体中文，其他语言选项将在后续版本中推出。"
+                             IsOpen="True"
+                             IsClosable="False"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 关于 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="关于" FontSize="16" FontWeight="SemiBold"/>
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 应用图标区 -->
+                        <Border Width="64" Height="64" CornerRadius="12">
+                            <Image Source="ms-appx:///Assets/Icons/WutheringWavesSteamHelper.ico"
+                                   Stretch="Uniform"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                            <TextBlock x:Name="txtAppName" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="txtAppVersion" FontSize="13"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="txtCopyright" FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <NavigationViewItemSeparator/>
+
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <TextBlock Text="帮助文档" FontSize="14" FontWeight="Medium" VerticalAlignment="Center"/>
+                            <HyperlinkButton Content="打开帮助页面 →"
+                                             HorizontalAlignment="Right"
+                                             NavigateUri="https://www.iryougi.com/index.php/wutheringwavessteamhelper/"/>
+                        </Grid>
+                        <Grid>
+                            <TextBlock Text="源代码" FontSize="14" FontWeight="Medium" VerticalAlignment="Center"/>
+                            <HyperlinkButton Content="GitHub →"
+                                             HorizontalAlignment="Right"
+                                             NavigateUri="https://github.com/iRyougi/WutheringWavesSteamHelper"/>
+                        </Grid>
+                        <Grid>
+                            <TextBlock Text="问题反馈/功能建议" FontSize="14" FontWeight="Medium" VerticalAlignment="Center"/>
+                            <HyperlinkButton Content="提交 Issue →"
+                                             HorizontalAlignment="Right"
+                                             NavigateUri="https://github.com/iRyougi/WutheringWavesSteamHelper/issues"/>
+                        </Grid>
+                        <InfoBar x:Name="helperInfoBar"
+                            Severity="Informational"
+                            Title="部分网站可能需要使用代理"
+                            IsOpen="True"
+                            IsClosable="False"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
