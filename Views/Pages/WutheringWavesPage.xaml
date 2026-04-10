@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WetheringWavesSteamHelper_WinUI.Views.Pages.WutheringWavesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
+
+            <!-- Steam 安装路径 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Steam 安装路径" FontSize="16" FontWeight="SemiBold"/>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txtSteamPath" PlaceholderText="Steam 安装路径（含 steam.exe）"/>
+                        <Button Grid.Column="1" Content="浏览" Click="BrowseSteamPath_Click"/>
+                        <Button Grid.Column="2" Content="自动检测" Click="DetectSteamPath_Click"/>
+                    </Grid>
+                    <TextBlock Text="提示：Steam 安装目录应包含 steam.exe 文件"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Steam 游戏库路径 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Steam 游戏库路径（SteamLibrary）" FontSize="16" FontWeight="SemiBold"/>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txtLibraryPath" PlaceholderText="SteamLibrary 路径（含 steamapps 子目录）"/>
+                        <Button Grid.Column="1" Content="浏览" Click="BrowseLibraryPath_Click"/>
+                        <Button Grid.Column="2" Content="自动检测" Click="DetectLibraryPath_Click"/>
+                    </Grid>
+                    <TextBlock Text="提示：选择 SteamLibrary 根目录，该目录下应有 steamapps 子目录"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 游戏源选择 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="国服游戏来源" FontSize="16" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <RadioButton x:Name="rdoOfficial" Content="官方启动器" GroupName="GameSource" IsChecked="True"
+                                     Checked="GameSource_Checked"/>
+                        <RadioButton x:Name="rdoWeGame" Content="WeGame" GroupName="GameSource"
+                                     Checked="GameSource_Checked"/>
+                    </StackPanel>
+                    <TextBlock Text="选择国服鸣潮的安装来源，影响「复制启动命令」的路径生成"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Steam ID -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Steam ID（SteamID64）" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBox x:Name="txtSteamId" PlaceholderText="输入您的 SteamID64（17 位数字）"/>
+                    <TextBlock Text="获取方式：访问 steamid.io 或 steamdb.info/calculator，登录后复制 SteamID64"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- BuildID 和 Manifest -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="BuildID 和 Manifest" FontSize="16" FontWeight="SemiBold"/>
+                    <Button x:Name="btnFetchSteamDB"
+                            Content="从 SteamDB 自动获取 BuildID 和 Manifest"
+                            Click="FetchFromSteamDB_Click"
+                            HorizontalAlignment="Stretch"/>
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="BuildID"/>
+                            <TextBox x:Name="txtBuildId" PlaceholderText="BuildID（如 16563028）"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="8">
+                            <TextBlock Text="Manifest"/>
+                            <TextBox x:Name="txtManifest" PlaceholderText="Manifest ID（如 4528498139812152558）"/>
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock Text="如自动获取失败，可前往 steamdb.info/app/3513350/depots/ 手动查询"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 操作按钮 -->
+            <StackPanel Spacing="8">
+                <Button x:Name="btnGenerate"
+                        Content="生成配置文件（appmanifest_3513350.acf）"
+                        Style="{StaticResource AccentButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        Click="Generate_Click"/>
+                <Button x:Name="btnCopyCommand"
+                        Content="复制启动命令到剪贴板"
+                        HorizontalAlignment="Stretch"
+                        Click="CopyCommand_Click"/>
+                <Button x:Name="btnOpenLauncher"
+                        Content="打开官方启动器"
+                        HorizontalAlignment="Stretch"
+                        Click="OpenLauncher_Click"/>
+            </StackPanel>
+
+            <!-- 日志输出 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <Grid>
+                        <TextBlock Text="运行日志" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Content="清空" HorizontalAlignment="Right" Click="ClearLog_Click"/>
+                    </Grid>
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            CornerRadius="4" Padding="12" Height="200">
+                        <ScrollViewer x:Name="logScrollViewer" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="logList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="12"
+                                                   TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

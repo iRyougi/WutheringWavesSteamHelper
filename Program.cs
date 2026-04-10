@@ -1,42 +1,127 @@
-using System.Runtime.InteropServices;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.DynamicDependency;
+using System.Text;
+using System.Threading;
 
-namespace WutheringWavesSteamHelper
+namespace WetheringWavesSteamHelper_WinUI;
+
+internal static class Program
 {
-    internal static class Program
+    private static readonly string EarlyCrashLogPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "WetheringWavesSteamHelper_WinUI",
+        "logs",
+        "early-startup.log");
+
+    private static readonly string EarlyCrashFallbackPath = Path.Combine(
+        AppContext.BaseDirectory,
+        "early-startup.log");
+
+    [STAThread]
+    private static void Main(string[] args)
     {
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        WriteEarlyLog("Program.Main.Start", null);
+        var bootstrapInitialized = false;
 
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        private const int SW_RESTORE = 9;
-
-        [STAThread]
-        static void Main()
+        try
         {
-            // 禁止多开：同一用户会话内只允许一个实例
-            using var mutex = new System.Threading.Mutex(true, "WutheringWavesSteamHelper_SingleInstance", out bool createdNew);
-            if (!createdNew)
+            WinRT.ComWrappersSupport.InitializeComWrappers();
+            WriteEarlyLog("Program.Main.ComWrappers.Initialized", null);
+
+            var options = Bootstrap.InitializeOptions.OnNoMatch_ShowUI | Bootstrap.InitializeOptions.OnPackageIdentity_NOOP;
+            if (Bootstrap.TryInitialize(0x00010008, "", new PackageVersion(), options, out var hr))
             {
-                // 找到已有实例窗口并聚焦
-                var current = System.Diagnostics.Process.GetCurrentProcess();
-                foreach (var proc in System.Diagnostics.Process.GetProcessesByName(current.ProcessName))
-                {
-                    if (proc.Id != current.Id && proc.MainWindowHandle != IntPtr.Zero)
-                    {
-                        ShowWindow(proc.MainWindowHandle, SW_RESTORE);
-                        SetForegroundWindow(proc.MainWindowHandle);
-                        break;
-                    }
-                }
-                return;
+                bootstrapInitialized = true;
+                WriteEarlyLog("Program.Main.Bootstrap.Initialized", null);
+            }
+            else
+            {
+                WriteEarlyLog($"Program.Main.Bootstrap.TryInitialize.False.HResult=0x{hr:X8}", null);
             }
 
-            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Start(_ =>
+            {
+                WriteEarlyLog("Application.Start.Callback.Enter", null);
+
+                SynchronizationContext.SetSynchronizationContext(
+                    new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread()));
+
+                new App();
+                WriteEarlyLog("Application.Start.Callback.App.Created", null);
+            });
+
+            WriteEarlyLog("Program.Main.Application.Start.Returned", null);
+        }
+        catch (Exception ex)
+        {
+            WriteEarlyLog("Program.Main.Catch", ex);
+            throw;
+        }
+        finally
+        {
+            if (bootstrapInitialized)
+            {
+                try
+                {
+                    Bootstrap.Shutdown();
+                    WriteEarlyLog("Program.Main.Bootstrap.Shutdown", null);
+                }
+                catch (Exception ex)
+                {
+                    WriteEarlyLog("Program.Main.Bootstrap.Shutdown.Catch", ex);
+                }
+            }
+        }
+    }
+
+    private static void WriteEarlyLog(string source, Exception? ex)
+    {
+        try
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("==============================");
+            sb.AppendLine($"Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+            sb.AppendLine($"Source: {source}");
+            sb.AppendLine($"PrimaryPath: {EarlyCrashLogPath}");
+            sb.AppendLine($"FallbackPath: {EarlyCrashFallbackPath}");
+
+            if (ex != null)
+            {
+                sb.AppendLine($"Exception: {ex.GetType().FullName}");
+                sb.AppendLine($"Message: {ex.Message}");
+                sb.AppendLine($"HResult: 0x{ex.HResult:X8}");
+                sb.AppendLine("StackTrace:");
+                sb.AppendLine(ex.StackTrace ?? "<null>");
+            }
+
+            var content = sb.ToString();
+            if (!TryAppend(EarlyCrashLogPath, content))
+            {
+                TryAppend(EarlyCrashFallbackPath, content);
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    private static bool TryAppend(string path, string content)
+    {
+        try
+        {
+            var dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            File.AppendAllText(path, content, Encoding.UTF8);
+            return true;
+        }
+        catch
+        {
+            return false;
         }
     }
 }
