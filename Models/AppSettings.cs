@@ -13,5 +13,6 @@ public class AppSettings
     // 应用设置
     public bool DeveloperMode { get; set; } = false;
     public bool DebugMode { get; set; } = false;
+    public bool BetaChannel { get; set; } = false;
     public string Language { get; set; } = "zh-CN";
 }

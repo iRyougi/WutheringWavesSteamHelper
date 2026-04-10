@@ -1,0 +1,10 @@
+{
+  "version": "99.0.0",
+  "releaseDate": "2026-04-11",
+  "message": "这是一条测试更新通知，点击下载按钮可跳转链接。",
+  "downloadUrl": {
+    "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
+    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.0.0-alpha.1"
+  },
+  "forceUpdate": false
+}

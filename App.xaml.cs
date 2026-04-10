@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using System.Runtime.InteropServices;
 using System.Text;
+using WetheringWavesSteamHelper_WinUI.Services;
 
 namespace WetheringWavesSteamHelper_WinUI;
 
@@ -30,6 +31,19 @@ public partial class App : Application
         {
             MainWindow = new MainWindow();
             MainWindow.Activate();
+
+            // 后台静默检查更新，不阻塞启动
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await UpdateService.Instance.CheckUpdateAsync().ConfigureAwait(false);
+                }
+                catch
+                {
+                    // 静默忽略，不影响主流程
+                }
+            });
         }
         catch (Exception ex)
         {

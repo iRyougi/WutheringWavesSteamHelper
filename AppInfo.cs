@@ -10,7 +10,7 @@ public static class AppInfo
     public const string Version = "v2.0.0";
 
     /// <summary>发布渠道/阶段，如 Alpha 1 Test、Beta、Release</summary>
-    public const string Channel = "Alpha 1 Test";
+    public const string Channel = "Alpha Test 1";
 
     /// <summary>完整版本字符串，用于界面显示，如 "v2.0.0 (Alpha 1 Test)"</summary>
     public const string FullVersion = $"{Version} ({Channel})";
