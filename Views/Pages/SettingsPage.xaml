@@ -13,6 +13,36 @@
             <!-- 页面标题 -->
             <TextBlock Text="设置" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,8"/>
 
+            <!-- 更新通知卡片（默认隐藏，检测到新版本后显示） -->
+            <Border x:Name="updateCard"
+                    Visibility="Collapsed"
+                    CornerRadius="8" Padding="16">
+                <Border.Background>
+                    <SolidColorBrush Color="#1A2D6B"/>
+                </Border.Background>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Spacing="6">
+                        <TextBlock x:Name="txtUpdateTitle"
+                                   Text="发现新版本"
+                                   FontSize="15" FontWeight="SemiBold"
+                                   Foreground="#60CDFF"/>
+                        <TextBlock x:Name="txtUpdateMessage"
+                                   FontSize="13" TextWrapping="Wrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                    <Button x:Name="btnDownload"
+                            Grid.Column="1"
+                            Content="立即下载"
+                            Style="{StaticResource AccentButtonStyle}"
+                            VerticalAlignment="Center"
+                            Click="BtnDownload_Click"/>
+                </Grid>
+            </Border>
+
             <!-- 开发者选项 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     CornerRadius="8" Padding="16">
@@ -36,33 +66,34 @@
                                       Toggled="DeveloperMode_Toggled"/>
                     </Grid>
 
-                    <NavigationViewItemSeparator/>
-
-                    <!-- Debug 模式 -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock Text="Debug 模式" FontSize="14" FontWeight="Medium"/>
-                            <TextBlock Text="启用后将在日志中输出详细的调试信息"
-                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <ToggleSwitch x:Name="tglDebugMode"
-                                      Grid.Column="1"
-                                      OffContent="" OnContent=""
-                                      Toggled="DebugMode_Toggled"/>
-                    </Grid>
-
                     <!-- 开发者模式才显示的额外选项 -->
                     <Border x:Name="developerOptionsPanel"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
                             CornerRadius="6" Padding="12"
                             Visibility="Collapsed">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="12">
                             <TextBlock Text="开发者工具" FontSize="13" FontWeight="SemiBold"
                                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+
+                            <!-- Debug 模式（仅开发者模式下可见） -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Debug 模式" FontSize="13" FontWeight="Medium"/>
+                                    <TextBlock Text="启用后将使用本地服务器检查更新（测试用）"
+                                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                                <ToggleSwitch x:Name="tglDebugMode"
+                                              Grid.Column="1"
+                                              OffContent="" OnContent=""
+                                              Toggled="DebugMode_Toggled"/>
+                            </Grid>
+
+                            <NavigationViewItemSeparator/>
+
                             <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                 <Run Text="设置文件路径："/>
                                 <Run x:Name="runSettingsPath" FontFamily="Consolas"/>
@@ -71,6 +102,25 @@
                                     FontSize="12"/>
                         </StackPanel>
                     </Border>
+
+                    <NavigationViewItemSeparator/>
+
+                    <!-- 测试版渠道 -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="接收测试版更新" FontSize="14" FontWeight="Medium"/>
+                            <TextBlock Text="启用后将从测试分支获取更新，可能包含不稳定功能"
+                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <ToggleSwitch x:Name="tglBetaChannel"
+                                      Grid.Column="1"
+                                      OffContent="" OnContent=""
+                                      Toggled="BetaChannel_Toggled"/>
+                    </Grid>
                 </StackPanel>
             </Border>
 
@@ -134,6 +184,28 @@
                             <TextBlock x:Name="txtCopyright" FontSize="12"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
+                    </Grid>
+
+                    <NavigationViewItemSeparator/>
+
+                    <!-- 手动检查更新 -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="检查更新" FontSize="14" FontWeight="Medium"/>
+                            <TextBlock x:Name="txtCheckUpdateStatus"
+                                       Text="检查是否有新版本可用"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button x:Name="btnCheckUpdate"
+                                Grid.Column="1"
+                                Content="检查更新"
+                                VerticalAlignment="Center"
+                                Click="BtnCheckUpdate_Click"/>
                     </Grid>
 
                     <NavigationViewItemSeparator/>

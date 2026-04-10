@@ -11,6 +11,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -21,10 +22,41 @@
                        FontWeight="SemiBold"
                        VerticalAlignment="Center"
                        Margin="16,0"/>
+
+            <!-- 普通更新提示按钮（右上角，默认隐藏） -->
+            <Button x:Name="btnUpdateBadge"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,12,0"
+                    Padding="10,4"
+                    Background="#1A2D6B"
+                    BorderThickness="0"
+                    CornerRadius="4"
+                    Click="BtnUpdateBadge_Click">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xEA6A;" FontSize="13" Foreground="White"/>
+                    <TextBlock Text="发现新版本" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
         </Grid>
 
+        <!-- 强制更新横幅（forceUpdate=true 时显示，占满整行） -->
+        <InfoBar x:Name="forceUpdateBanner"
+                 Grid.Row="1"
+                 Severity="Error"
+                 Title="必须更新才能继续使用"
+                 IsOpen="False"
+                 IsClosable="False"
+                 Margin="0">
+            <InfoBar.ActionButton>
+                <Button Content="前往下载" Click="BtnForceUpdateDownload_Click"
+                        Style="{StaticResource AccentButtonStyle}"/>
+            </InfoBar.ActionButton>
+        </InfoBar>
+
         <NavigationView x:Name="NavView"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
                         PaneDisplayMode="Left"
@@ -57,5 +89,28 @@
 
             <Frame x:Name="ContentFrame"/>
         </NavigationView>
+
+        <!-- 强制更新全屏遮罩（锁定整个内容区，不影响标题栏） -->
+        <Grid x:Name="forceUpdateOverlay"
+              Grid.Row="1" Grid.RowSpan="2"
+              Visibility="Collapsed"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Opacity="0.97">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" MaxWidth="480">
+                <FontIcon Glyph="&#xEA6A;" FontSize="48"
+                          Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
+                <TextBlock Text="需要强制更新" FontSize="22" FontWeight="SemiBold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="txtForceUpdateMsg"
+                           FontSize="14" TextWrapping="Wrap" TextAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <Button x:Name="btnForceDownloadOverlay"
+                        Content="立即下载新版本"
+                        Style="{StaticResource AccentButtonStyle}"
+                        HorizontalAlignment="Center"
+                        Padding="24,8"
+                        Click="BtnForceUpdateDownload_Click"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
