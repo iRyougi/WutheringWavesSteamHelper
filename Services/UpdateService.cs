@@ -21,7 +21,7 @@ public sealed class UpdateService
         "https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/master/version.json";
 
     private const string MirrorRawUrl =
-        "https://mirror.ghproxy.com/https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/master/version.json";
+        "https://ghfast.top/https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/master/version.json";
 
     private const string GitHubProbeUrl =
         "https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/master/version.json";
@@ -31,7 +31,7 @@ public sealed class UpdateService
         "https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/v2.0.0-debug/version.json";
 
     private const string BetaMirrorUrl =
-        "https://mirror.ghproxy.com/https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/v2.0.0-debug/version.json";
+        "https://ghfast.top/https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/v2.0.0-debug/version.json";
 
     // ── Debug 模式本地地址 ────────────────────────────────────────────────────
     private const string DebugLocalUrl = "http://127.0.0.1:9090/version.json";
