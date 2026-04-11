@@ -28,10 +28,10 @@ public sealed class UpdateService
 
     // ── 测试版渠道地址 ────────────────────────────────────────────────────────
     private const string BetaRawUrl =
-        "https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/v2.0.0-debug/version.json";
+        "https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/preview/version.json";
 
     private const string BetaMirrorUrl =
-        "https://ghfast.top/https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/v2.0.0-debug/version.json";
+        "https://ghfast.top/https://raw.githubusercontent.com/iRyougi/WutheringWavesSteamHelper/preview/version.json";
 
     // ── Debug 模式本地地址 ────────────────────────────────────────────────────
     private const string DebugLocalUrl = "http://127.0.0.1:9090/version.json";

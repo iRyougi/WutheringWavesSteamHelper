@@ -105,7 +105,7 @@ public sealed partial class WutheringWavesPage : Page
             var confirmDialog = new ContentDialog
             {
                 Title = "切换到 WeGame 版本",
-                Content = "WeGame 版本启动需要复制官方启动器版本！是否继续您的操作？\n\n详情请访问 设置 - 帮助文档",
+                Content = "WeGame版本需要使用官方启动器修复才可使用！是否继续您的操作？\n\n详情请访问 设置 - 帮助文档",
                 PrimaryButtonText = "继续",
                 CloseButtonText = "取消",        // CloseButton 为默认高亮按钮
                 DefaultButton = ContentDialogButton.Close,
