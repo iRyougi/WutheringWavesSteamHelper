@@ -18,6 +18,15 @@
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 	<WindowsPackageType>None</WindowsPackageType>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Output\**" />
+    <EmbeddedResource Remove="Output\**" />
+    <None Remove="Output\**" />
+    <Page Remove="Output\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="WutheringWavesSteamHelper.iss" />
+  </ItemGroup>
 
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
@@ -63,4 +72,7 @@
     <!-- PublishTrimmed 仅在 SelfContained=true 时有效，非独立发布时禁用 -->
     <PublishTrimmed>False</PublishTrimmed>
   </PropertyGroup>
+  <ItemGroup>
+    <PRIResource Remove="Output\**" />
+  </ItemGroup>
 </Project>
