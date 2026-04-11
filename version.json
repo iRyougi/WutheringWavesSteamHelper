@@ -1,10 +1,10 @@
 {
-  "version": "2.0.0",
-  "releaseDate": "2026-04-11",
-  "message": "这是一条测试更新通知，点击下载按钮可跳转链接。",
+  "version": "2.0.1",
+  "releaseDate": "2026-04-12",
+  "message": "由于Wegame版本需要特殊操作才能启动，为Wegame按钮增加特殊提示",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
-    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.0.0"
+    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.0.1"
   },
   "forceUpdate": false
 }

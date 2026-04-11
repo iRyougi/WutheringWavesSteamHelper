@@ -94,13 +94,35 @@ public sealed partial class WutheringWavesPage : Page
         }
     }
 
-    private void GameSource_Checked(object sender, RoutedEventArgs e)
+    private async void GameSource_Checked(object sender, RoutedEventArgs e)
     {
         // 初始化阶段不触发检测
         if (_sourceChanging) return;
 
         if (rdoWeGame.IsChecked == true)
         {
+            // 切换到 WeGame 前先弹出确认提示
+            var confirmDialog = new ContentDialog
+            {
+                Title = "切换到 WeGame 版本",
+                Content = "WeGame 版本启动需要复制官方启动器版本！是否继续您的操作？\n\n详情请访问 设置 - 帮助文档",
+                PrimaryButtonText = "继续",
+                CloseButtonText = "取消",        // CloseButton 为默认高亮按钮
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = XamlRoot
+            };
+
+            var result = await confirmDialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+            {
+                // 用户取消 → 回退到官方启动器
+                _sourceChanging = true;
+                rdoOfficial.IsChecked = true;
+                _sourceChanging = false;
+                return;
+            }
+
+            // 用户选择继续 → 检测 WeGame 安装
             var wegamePath = _steamService.DetectWeGameInstallPath();
             if (wegamePath != null)
             {
