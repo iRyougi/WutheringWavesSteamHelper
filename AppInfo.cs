@@ -7,7 +7,7 @@ namespace WetheringWavesSteamHelper_WinUI;
 public static class AppInfo
 {
     /// <summary>版本号，如 v2.0.0</summary>
-    public const string Version = "v2.0.0";
+    public const string Version = "v2.0.1";
 
     /// <summary>发布渠道/阶段，如 Alpha 1 Test、Beta、Release</summary>
     public const string Channel = "Release";
