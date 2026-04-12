@@ -63,6 +63,32 @@
                     </StackPanel>
                     <TextBlock Text="选择国服鸣潮的安装来源，影响「复制启动命令」的路径生成"
                                FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                    <!-- 手动选择客户端 -->
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            CornerRadius="4" Padding="12">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="客户端路径（可选手动指定）" FontWeight="SemiBold"/>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="txtClientExePath"
+                                         PlaceholderText="留空则自动检测"
+                                         IsReadOnly="True"/>
+                                <Button Grid.Column="1" Content="手动选择" Click="BrowseClientExe_Click"/>
+                                <Button Grid.Column="2" Content="清除" Click="ClearClientExe_Click"/>
+                            </Grid>
+                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap">
+                                <Run Text="提示：客户端可执行文件为 "/>
+                                <Run Text="Client-Win64-Shipping.exe" FontWeight="SemiBold"/>
+                                <Run Text="。详情请见设置 - 帮助文档"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 

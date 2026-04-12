@@ -1,10 +1,10 @@
 {
-  "version": "2.0.1",
-  "releaseDate": "2026-04-12",
-  "message": "由于Wegame版本需要特殊操作才能启动，为Wegame按钮增加特殊提示",
+  "version": "2.0.2",
+  "releaseDate": "2026-04-13",
+  "message": "为国服鸣潮客户端添加了手动选择按钮，防止自动识别出错",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
-    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.0.1"
+    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.0.2"
   },
   "forceUpdate": false
 }
