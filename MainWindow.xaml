@@ -17,28 +17,28 @@
 
         <!-- 顶部标题栏 -->
         <Grid x:Name="TopBarGrid" Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-            <TextBlock x:Name="txtTitleBar"
-                       FontSize="20"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"
-                       Margin="16,0"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
+                <TextBlock x:Name="txtTitleBar"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
 
-            <!-- 普通更新提示按钮（右上角，默认隐藏） -->
-            <Button x:Name="btnUpdateBadge"
-                    Visibility="Collapsed"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Margin="0,0,120,0"
-                    Padding="10,4"
-                    Background="#1A2D6B"
-                    BorderThickness="0"
-                    CornerRadius="4"
-                    Click="BtnUpdateBadge_Click">
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <FontIcon Glyph="&#xEA6A;" FontSize="13" Foreground="White"/>
-                    <TextBlock Text="发现新版本" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
+                <!-- 普通更新提示按钮（标题右侧，默认隐藏） -->
+                <Button x:Name="btnUpdateBadge"
+                        Visibility="Collapsed"
+                        VerticalAlignment="Center"
+                        Margin="12,0,0,0"
+                        Padding="10,4"
+                        Background="#1A2D6B"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        Click="BtnUpdateBadge_Click">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xEA6A;" FontSize="13" Foreground="White"/>
+                        <TextBlock Text="发现新版本" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- 强制更新横幅（forceUpdate=true 时显示，占满整行） -->
