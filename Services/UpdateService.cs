@@ -92,13 +92,37 @@ public sealed class UpdateService
             var info = JsonSerializer.Deserialize<VersionInfo>(json, _jsonOptions);
             if (info is null) return;
 
-            var remoteVersionStr = info.Version.TrimStart('v');
-            var localVersionStr  = AppInfo.Version.TrimStart('v');
+            // 解析版本号：格式为 "2.0.2" 或 "2.0.2(Beta 1)" 或 "v2.0.2(Beta 1)"
+            // 本地版本来自 AppInfo.FullVersion，格式为 "v2.0.2 (Beta)"
+            var remoteVersionFull = info.Version.TrimStart('v');
+            var localVersionFull  = AppInfo.FullVersion.TrimStart('v');
+
+            // 提取主版本号（括号前的部分）
+            var remoteVersionStr = ExtractMainVersion(remoteVersionFull);
+            var localVersionStr  = ExtractMainVersion(localVersionFull);
 
             if (!System.Version.TryParse(remoteVersionStr, out var remoteVersion)) return;
             if (!System.Version.TryParse(localVersionStr,  out var localVersion))  return;
 
-            if (remoteVersion <= localVersion) return;
+            // 主版本号不同时，直接用主版本号决定
+            if (remoteVersion != localVersion)
+            {
+                if (remoteVersion <= localVersion) return;
+            }
+            else if (beta)
+            {
+                // 主版本号相同时，若为 Beta 渠道，比较括号内的子版本（如 Beta 1、Beta 2）
+                var remoteSubVersion = ExtractSubVersion(remoteVersionFull);
+                var localSubVersion  = ExtractSubVersion(localVersionFull);
+
+                // 无法解析子版本，或远端子版本不大于本地，则跳过
+                if (remoteSubVersion <= localSubVersion) return;
+            }
+            else
+            {
+                // 正式渠道：主版本相同即为最新
+                return;
+            }
 
             var downloadUrl = debug
                 ? (string.IsNullOrWhiteSpace(info.DownloadUrl.Global)
@@ -197,5 +221,38 @@ public sealed class UpdateService
         {
             return null;
         }
+    }
+
+    /// <summary>
+    /// 从版本字符串中提取主版本号（括号前的部分，去除空格）。
+    /// 例："2.0.2(Beta 1)" → "2.0.2"，"2.0.2 (Release)" → "2.0.2"
+    /// </summary>
+    private static string ExtractMainVersion(string versionFull)
+    {
+        var idx = versionFull.IndexOf('(');
+        return (idx >= 0 ? versionFull[..idx] : versionFull).Trim();
+    }
+
+    /// <summary>
+    /// 从版本字符串中提取括号内的子版本序号（仅限 Beta/Alpha 等含数字的情况）。
+    /// 例："2.0.2 (Beta 1)" → 1，"2.0.2 (Beta 2)" → 2，"2.0.2 (Release)" → 0（忽略）
+    /// 无法解析时返回 0。
+    /// </summary>
+    private static int ExtractSubVersion(string versionFull)
+    {
+        var start = versionFull.IndexOf('(');
+        var end   = versionFull.IndexOf(')');
+        if (start < 0 || end < 0 || end <= start) return 0;
+
+        var inner = versionFull[(start + 1)..end].Trim(); // e.g. "Beta 1"
+
+        // 取括号内最后一个数字段
+        var parts = inner.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var part in parts.Reverse())
+        {
+            if (int.TryParse(part, out var num)) return num;
+        }
+
+        return 0;
     }
 }
