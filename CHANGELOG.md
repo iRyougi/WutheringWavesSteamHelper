@@ -4,6 +4,26 @@
 
 ---
 
+## v2.1.0 (2026-04-27)
+
+### 🐛 修复
+
+- 暗黑模式下系统标题栏仍为白色的问题（启用 `ExtendsContentIntoTitleBar` + `AppWindowTitleBar` 颜色适配）
+- 切换 Windows 系统主题后标题栏颜色未实时跟随的问题
+
+### 🛠️ 工程改进
+
+- **图标资源路径统一**：所有图标引用收敛到 `Assets/Icons/`，确认无历史 `Icons/` 残留
+- **LogService 重构**：改为进程级单例，应用启动时自动创建 `logs/yyyy-MM-dd_HH-mm-ss.log`，每次 `AddLog` 同步落盘，自动保留最近 20 个日志文件
+- 日志服务初始化提前到 `App` 构造阶段，覆盖启动期诊断信息
+- 修复页面重复导航时 `CollectionChanged` 订阅堆积导致的潜在内存泄漏
+
+### 🗺️ 计划中（v2.2）
+
+- Steam 安装路径 / 库路径 / SteamID 迁移到设置页（BuildID / Manifest 保留在主页面）
+
+---
+
 ## v2.0.0 (2026-04-11)
 
 ### 💥 重大更新 — 全面重构

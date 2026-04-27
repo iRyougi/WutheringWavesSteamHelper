@@ -21,6 +21,7 @@ public partial class App : Application
     {
         WriteCrashLog("App.Constructor.Start", null);
         RegisterGlobalExceptionHandlers();
+        _ = LogService.Instance;
         InitializeComponent();
         WriteCrashLog("App.Constructor.End", null);
     }

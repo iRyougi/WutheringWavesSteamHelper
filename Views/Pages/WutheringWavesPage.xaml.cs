@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Specialized;
 using Windows.Storage.Pickers;
 using Windows.ApplicationModel.DataTransfer;
 using WetheringWavesSteamHelper_WinUI.Services;
@@ -11,7 +12,7 @@ public sealed partial class WutheringWavesPage : Page
 {
     private readonly SteamService _steamService = new();
     private readonly SettingsService _settingsService = new();
-    private readonly LogService _logService = new();
+    private readonly LogService _logService = LogService.Instance;
     private AppSettings _settings = new();
 
     // 启动初始化期间禁止触发游戏源检测
@@ -20,20 +21,25 @@ public sealed partial class WutheringWavesPage : Page
     // 用户手动选择的客户端 exe 路径（null 表示使用自动检测）
     private string? _manualClientExePath = null;
 
+    // 日志 CollectionChanged handler，用于在 Unloaded 时取消订阅
+    private NotifyCollectionChangedEventHandler? _logScrollHandler;
+
     public WutheringWavesPage()
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         logList.ItemsSource = _logService.Logs;
         // 日志新增时自动滚动到底部
-        _logService.Logs.CollectionChanged += (_, _) =>
+        _logScrollHandler = (_, _) =>
         {
             logScrollViewer.ChangeView(null, logScrollViewer.ScrollableHeight, null);
         };
+        _logService.Logs.CollectionChanged += _logScrollHandler;
         _settings = _settingsService.Load();
         LoadSettings();
         AutoDetectPaths();
@@ -58,6 +64,12 @@ public sealed partial class WutheringWavesPage : Page
 
         // 启动完成后允许用户切换时触发检测
         _sourceChanging = false;
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_logScrollHandler != null)
+            _logService.Logs.CollectionChanged -= _logScrollHandler;
     }
 
     private void LoadSettings()
