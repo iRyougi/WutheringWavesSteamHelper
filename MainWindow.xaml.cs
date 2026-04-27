@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Windowing;
 using Windows.Graphics;
+using Windows.UI;
 using WetheringWavesSteamHelper_WinUI.Services;
 
 namespace WetheringWavesSteamHelper_WinUI;
@@ -9,11 +10,18 @@ namespace WetheringWavesSteamHelper_WinUI;
 public sealed partial class MainWindow : Window
 {
     private string _forceDownloadUrl = "";
+    private AppWindow? _appWindow;
 
     public MainWindow()
     {
         InitializeComponent();
+
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(TopBarGrid);
+
         ConfigureFixedWindow();
+
+        ((FrameworkElement)Content).ActualThemeChanged += (_, _) => ApplyTitleBarColors();
 
         txtTitleBar.Text = AppInfo.AppName;
 
@@ -78,22 +86,55 @@ public sealed partial class MainWindow : Window
     {
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
-        var appWindow = AppWindow.GetFromWindowId(windowId);
+        _appWindow = AppWindow.GetFromWindowId(windowId);
 
-        appWindow.Title = AppInfo.WindowTitle;
+        _appWindow.Title = AppInfo.WindowTitle;
 
         var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "Icons", "WutheringWavesSteamHelper.ico");
         if (File.Exists(iconPath))
         {
-            appWindow.SetIcon(iconPath);
+            _appWindow.SetIcon(iconPath);
         }
 
-        appWindow.Resize(new SizeInt32(1100, 780));
+        _appWindow.Resize(new SizeInt32(1100, 780));
 
-        if (appWindow.Presenter is OverlappedPresenter presenter)
+        if (_appWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.IsResizable = false;
             presenter.IsMaximizable = false;
+        }
+
+        ApplyTitleBarColors();
+    }
+
+    private void ApplyTitleBarColors()
+    {
+        if (_appWindow == null || !AppWindowTitleBar.IsCustomizationSupported()) return;
+
+        var titleBar = _appWindow.TitleBar;
+        var isDark = ((FrameworkElement)Content).ActualTheme == ElementTheme.Dark;
+
+        // 透明背景，让 XAML 内容的颜色透出来
+        titleBar.ButtonBackgroundColor = Color.FromArgb(0, 0, 0, 0);
+        titleBar.ButtonInactiveBackgroundColor = Color.FromArgb(0, 0, 0, 0);
+
+        if (isDark)
+        {
+            titleBar.ButtonForegroundColor = Color.FromArgb(255, 255, 255, 255);
+            titleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 255, 255, 255);
+            titleBar.ButtonPressedForegroundColor = Color.FromArgb(255, 200, 200, 200);
+            titleBar.ButtonInactiveForegroundColor = Color.FromArgb(255, 127, 127, 127);
+            titleBar.ButtonHoverBackgroundColor = Color.FromArgb(40, 255, 255, 255);
+            titleBar.ButtonPressedBackgroundColor = Color.FromArgb(80, 255, 255, 255);
+        }
+        else
+        {
+            titleBar.ButtonForegroundColor = Color.FromArgb(255, 0, 0, 0);
+            titleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 0, 0, 0);
+            titleBar.ButtonPressedForegroundColor = Color.FromArgb(255, 50, 50, 50);
+            titleBar.ButtonInactiveForegroundColor = Color.FromArgb(255, 127, 127, 127);
+            titleBar.ButtonHoverBackgroundColor = Color.FromArgb(40, 0, 0, 0);
+            titleBar.ButtonPressedBackgroundColor = Color.FromArgb(80, 0, 0, 0);
         }
     }
 

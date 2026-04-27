@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Specialized;
 using Windows.Storage.Pickers;
 using Windows.ApplicationModel.DataTransfer;
 using WetheringWavesSteamHelper_WinUI.Services;
@@ -11,26 +12,34 @@ public sealed partial class WutheringWavesPage : Page
 {
     private readonly SteamService _steamService = new();
     private readonly SettingsService _settingsService = new();
-    private readonly LogService _logService = new();
+    private readonly LogService _logService = LogService.Instance;
     private AppSettings _settings = new();
 
     // 启动初始化期间禁止触发游戏源检测
     private bool _sourceChanging = true;
 
+    // 用户手动选择的客户端 exe 路径（null 表示使用自动检测）
+    private string? _manualClientExePath = null;
+
+    // 日志 CollectionChanged handler，用于在 Unloaded 时取消订阅
+    private NotifyCollectionChangedEventHandler? _logScrollHandler;
+
     public WutheringWavesPage()
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         logList.ItemsSource = _logService.Logs;
         // 日志新增时自动滚动到底部
-        _logService.Logs.CollectionChanged += (_, _) =>
+        _logScrollHandler = (_, _) =>
         {
             logScrollViewer.ChangeView(null, logScrollViewer.ScrollableHeight, null);
         };
+        _logService.Logs.CollectionChanged += _logScrollHandler;
         _settings = _settingsService.Load();
         LoadSettings();
         AutoDetectPaths();
@@ -55,6 +64,12 @@ public sealed partial class WutheringWavesPage : Page
 
         // 启动完成后允许用户切换时触发检测
         _sourceChanging = false;
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_logScrollHandler != null)
+            _logService.Logs.CollectionChanged -= _logScrollHandler;
     }
 
     private void LoadSettings()
@@ -148,6 +163,50 @@ public sealed partial class WutheringWavesPage : Page
                 _sourceChanging = false;
             }
         }
+    }
+
+    private async void BrowseClientExe_Click(object sender, RoutedEventArgs e)
+    {
+        var picker = new Windows.Storage.Pickers.FileOpenPicker();
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+        picker.FileTypeFilter.Add(".exe");
+        picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
+
+        var file = await picker.PickSingleFileAsync();
+        if (file == null) return;
+
+        // 必须选择 .exe 文件（picker 已过滤，此处双重确认）
+        if (!file.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+        {
+            await ShowInfoAsync("所选文件不是 .exe 文件，请重新选择可执行文件。");
+            return;
+        }
+
+        // 建议客户端文件名为 Client-Win64-Shipping.exe，若不符则提示确认
+        if (!file.Name.Equals("Client-Win64-Shipping.exe", StringComparison.OrdinalIgnoreCase))
+        {
+            var confirmDialog = new ContentDialog
+            {
+                Title = "确认文件",
+                Content = $"所选文件不是标准客户端文件（Client-Win64-Shipping.exe），是否仍然使用？\n\n所选文件：{file.Name}\n路径：{file.Path}",
+                PrimaryButtonText = "使用",
+                CloseButtonText = "重新选择",
+                XamlRoot = XamlRoot
+            };
+            if (await confirmDialog.ShowAsync() != ContentDialogResult.Primary) return;
+        }
+
+        _manualClientExePath = file.Path;
+        txtClientExePath.Text = file.Path;
+        _logService.AddLog($"已手动指定客户端路径：{file.Path}");
+    }
+
+    private void ClearClientExe_Click(object sender, RoutedEventArgs e)
+    {
+        _manualClientExePath = null;
+        txtClientExePath.Text = string.Empty;
+        _logService.AddLog("已清除手动指定的客户端路径，将使用自动检测");
     }
 
     private async void DetectLibraryPath_Click(object sender, RoutedEventArgs e)
@@ -397,7 +456,26 @@ public sealed partial class WutheringWavesPage : Page
 
         string? selectedPath = null;
 
-        if (rdoWeGame.IsChecked == true)
+        // 如果用户已手动指定客户端 exe，优先使用
+        if (!string.IsNullOrEmpty(_manualClientExePath) && File.Exists(_manualClientExePath))
+        {
+            // 从 exe 路径推导出游戏根目录
+            // 官方：...\Wuthering Waves Game\Client\Binaries\Win64\Client-Win64-Shipping.exe → ...\Wuthering Waves Game 的上级
+            // WeGame：...\Client\Binaries\Win64\Client-Win64-Shipping.exe → Client 的上级
+            var exeDir = Path.GetDirectoryName(_manualClientExePath)!;  // Win64
+            var binariesDir = Path.GetDirectoryName(exeDir)!;           // Binaries
+            var clientDir = Path.GetDirectoryName(binariesDir)!;        // Client
+            var gameRootDir = Path.GetDirectoryName(clientDir)!;        // 游戏根目录
+
+            // 判断是否官方结构（含 Wuthering Waves Game 层）
+            if (Path.GetFileName(gameRootDir).Equals("Wuthering Waves Game", StringComparison.OrdinalIgnoreCase))
+                selectedPath = Path.GetDirectoryName(gameRootDir)!;
+            else
+                selectedPath = gameRootDir;
+
+            _logService.AddLog($"使用手动指定的客户端路径，推导安装目录：{selectedPath}");
+        }
+        else if (rdoWeGame.IsChecked == true)
         {
             // WeGame 模式：优先读注册表
             selectedPath = _steamService.DetectWeGameInstallPath();
