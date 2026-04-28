@@ -1,6 +1,7 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.DynamicDependency;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -8,6 +9,8 @@ namespace WetheringWavesSteamHelper_WinUI;
 
 internal static class Program
 {
+    private static Mutex? _singleInstanceMutex;
+
     private static readonly string EarlyCrashLogPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "WetheringWavesSteamHelper_WinUI",
@@ -18,10 +21,36 @@ internal static class Program
         AppContext.BaseDirectory,
         "early-startup.log");
 
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern IntPtr FindWindow(string? lpClassName, string? lpWindowName);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    private const int SW_RESTORE = 9;
+
     [STAThread]
     private static void Main(string[] args)
     {
         WriteEarlyLog("Program.Main.Start", null);
+
+        _singleInstanceMutex = new Mutex(true, @"Local\WetheringWavesSteamHelper_WinUI_SingleInstance", out var isFirstInstance);
+        if (!isFirstInstance)
+        {
+            var hwnd = FindWindow(null, AppInfo.WindowTitle);
+            if (hwnd != IntPtr.Zero)
+            {
+                ShowWindow(hwnd, SW_RESTORE);
+                SetForegroundWindow(hwnd);
+            }
+            _singleInstanceMutex.Dispose();
+            _singleInstanceMutex = null;
+            return;
+        }
+
         var bootstrapInitialized = false;
 
         try
