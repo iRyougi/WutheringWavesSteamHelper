@@ -7,11 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer>
+    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
         <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
 
             <!-- Steam 安装路径 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <TextBlock Text="Steam 安装路径" FontSize="16" FontWeight="SemiBold"/>
@@ -32,6 +33,7 @@
 
             <!-- Steam 游戏库路径 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <TextBlock Text="Steam 游戏库路径（SteamLibrary）" FontSize="16" FontWeight="SemiBold"/>
@@ -52,6 +54,7 @@
 
             <!-- 游戏源选择 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <TextBlock Text="国服游戏来源" FontSize="16" FontWeight="SemiBold"/>
@@ -66,6 +69,7 @@
 
                     <!-- 手动选择客户端 -->
                     <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
                             CornerRadius="4" Padding="12">
                         <StackPanel Spacing="8">
                             <TextBlock Text="客户端路径（可选手动指定）" FontWeight="SemiBold"/>
@@ -94,6 +98,7 @@
 
             <!-- Steam ID -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <TextBlock Text="Steam ID（SteamID64）" FontSize="16" FontWeight="SemiBold"/>
@@ -105,6 +110,7 @@
 
             <!-- BuildID 和 Manifest -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <TextBlock Text="BuildID 和 Manifest" FontSize="16" FontWeight="SemiBold"/>
@@ -150,6 +156,7 @@
 
             <!-- 日志输出 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <Grid>
@@ -157,6 +164,7 @@
                         <Button Content="清空" HorizontalAlignment="Right" Click="ClearLog_Click"/>
                     </Grid>
                     <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
                             CornerRadius="4" Padding="12" Height="200">
                         <ScrollViewer x:Name="logScrollViewer" VerticalScrollBarVisibility="Auto">
                             <ItemsControl x:Name="logList">
