@@ -1,10 +1,10 @@
 {
-  "version": "2.1.0",
-  "releaseDate": "2026-04-27",
-  "message": "标题栏暗色适配&日志服务重构&内存泄漏修复,建议所有用户更新",
+  "version": "2.1.1",
+  "releaseDate": "2026-05-06",
+  "message": "修复一些已知的问题，详情请见版本公告",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
-    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.1.0"
+    "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/tag/v2.1.1"
   },
   "forceUpdate": false
 }

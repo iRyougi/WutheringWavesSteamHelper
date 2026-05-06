@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer>
+    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
         <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
 
             <!-- 页面标题 -->
@@ -45,6 +45,7 @@
 
             <!-- 开发者选项 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="16">
                     <TextBlock Text="开发者选项" FontSize="16" FontWeight="SemiBold"/>
@@ -69,6 +70,7 @@
                     <!-- 开发者模式才显示的额外选项 -->
                     <Border x:Name="developerOptionsPanel"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
                             CornerRadius="6" Padding="12"
                             Visibility="Collapsed">
                         <StackPanel Spacing="12">
@@ -126,6 +128,7 @@
 
             <!-- 语言设置（预留） -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="16">
                     <TextBlock Text="语言 / Language" FontSize="16" FontWeight="SemiBold"/>
@@ -161,6 +164,7 @@
 
             <!-- 关于 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
                     <TextBlock Text="关于" FontSize="16" FontWeight="SemiBold"/>
