@@ -71,7 +71,7 @@
                         <FontIcon Glyph="&#xE7FC;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="自定义 Manifest" Tag="CustomManifest">
+                <NavigationViewItem Content="自定义" Tag="CustomManifest">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7C3;"/>
                     </NavigationViewItem.Icon>
