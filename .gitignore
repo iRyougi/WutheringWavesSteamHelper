@@ -369,4 +369,4 @@ FodyWeavers.xsd
 .claude
 *.iss
 Output/
-/docs/
+docs/
