@@ -42,7 +42,6 @@ public sealed partial class WutheringWavesPage : Page
         _logService.Logs.CollectionChanged += _logScrollHandler;
         _settings = _settingsService.Load();
         LoadSettings();
-        AutoDetectPaths();
 
         // 启动时根据保存设置检测游戏源，若检测不到则提示
         if (_settings.CnGameSource == "wegame")
@@ -74,9 +73,9 @@ public sealed partial class WutheringWavesPage : Page
 
     private void LoadSettings()
     {
-        txtSteamPath.Text = _settings.SteamInstallPath;
-        txtLibraryPath.Text = _settings.SteamLibraryPath;
-        txtSteamId.Text = _settings.SteamId;
+        // 重新加载设置（用户可能在设置页修改了全局配置）
+        _settings = _settingsService.Load();
+
         txtBuildId.Text = _settings.BuildId;
         txtManifest.Text = _settings.Manifest;
 
@@ -84,29 +83,6 @@ public sealed partial class WutheringWavesPage : Page
             rdoWeGame.IsChecked = true;
         else
             rdoOfficial.IsChecked = true;
-    }
-
-    private void AutoDetectPaths()
-    {
-        if (string.IsNullOrEmpty(txtSteamPath.Text))
-        {
-            var steamPath = _steamService.DetectSteamInstallPath();
-            if (steamPath != null)
-            {
-                txtSteamPath.Text = steamPath;
-                _logService.AddLog($"已自动识别 Steam 安装路径：{steamPath}");
-            }
-        }
-
-        if (string.IsNullOrEmpty(txtLibraryPath.Text))
-        {
-            var libraries = _steamService.DetectSteamLibraryPaths();
-            if (libraries.Count > 0)
-            {
-                txtLibraryPath.Text = libraries[0];
-                _logService.AddLog($"已自动识别 SteamLibrary 路径：{libraries[0]}");
-            }
-        }
     }
 
     private async void GameSource_Checked(object sender, RoutedEventArgs e)
@@ -209,121 +185,6 @@ public sealed partial class WutheringWavesPage : Page
         _logService.AddLog("已清除手动指定的客户端路径，将使用自动检测");
     }
 
-    private async void DetectLibraryPath_Click(object sender, RoutedEventArgs e)
-    {
-        var libraries = _steamService.DetectSteamLibraryPaths();
-        if (libraries.Count == 0)
-        {
-            _logService.AddLog("未检测到 Steam 游戏库路径，请手动选择");
-            await ShowInfoAsync("未检测到 Steam 游戏库路径，请手动选择。");
-            return;
-        }
-
-        if (libraries.Count == 1)
-        {
-            txtLibraryPath.Text = libraries[0];
-            _logService.AddLog($"已自动识别 SteamLibrary 路径：{libraries[0]}");
-            return;
-        }
-
-        var comboBox = new ComboBox
-        {
-            ItemsSource = libraries,
-            SelectedIndex = 0,
-            MinWidth = 520
-        };
-
-        var dialog = new ContentDialog
-        {
-            Title = "检测到多个 Steam 游戏库",
-            Content = comboBox,
-            PrimaryButtonText = "确定",
-            CloseButtonText = "取消",
-            XamlRoot = XamlRoot
-        };
-
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary && comboBox.SelectedItem is string selectedPath)
-        {
-            txtLibraryPath.Text = selectedPath;
-            _logService.AddLog($"已选择 SteamLibrary 路径：{selectedPath}");
-        }
-    }
-
-    private async void BrowseSteamPath_Click(object sender, RoutedEventArgs e)
-    {
-        var picker = new FolderPicker();
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-        picker.FileTypeFilter.Add("*");
-
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder != null)
-        {
-            // 验证选择的文件夹中是否有 steam.exe
-            var steamExe = Path.Combine(folder.Path, "steam.exe");
-            if (!File.Exists(steamExe))
-            {
-                var dialog = new ContentDialog
-                {
-                    Title = "提示",
-                    Content = $"所选文件夹中未找到 steam.exe，是否仍然使用该路径？\n{folder.Path}",
-                    PrimaryButtonText = "使用",
-                    CloseButtonText = "取消",
-                    XamlRoot = XamlRoot
-                };
-                var result = await dialog.ShowAsync();
-                if (result != ContentDialogResult.Primary) return;
-            }
-            txtSteamPath.Text = folder.Path;
-            _logService.AddLog($"已手动选择 Steam 安装路径：{folder.Path}");
-        }
-    }
-
-    private async void BrowseLibraryPath_Click(object sender, RoutedEventArgs e)
-    {
-        var picker = new FolderPicker();
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-        picker.FileTypeFilter.Add("*");
-
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder != null)
-        {
-            // 验证选择的文件夹中是否有 steamapps 子目录
-            var steamappsPath = Path.Combine(folder.Path, "steamapps");
-            if (!Directory.Exists(steamappsPath))
-            {
-                var dialog = new ContentDialog
-                {
-                    Title = "提示",
-                    Content = $"所选文件夹中未找到 steamapps 目录，是否仍然使用该路径？\n{folder.Path}",
-                    PrimaryButtonText = "使用",
-                    CloseButtonText = "取消",
-                    XamlRoot = XamlRoot
-                };
-                var result = await dialog.ShowAsync();
-                if (result != ContentDialogResult.Primary) return;
-            }
-            txtLibraryPath.Text = folder.Path;
-            _logService.AddLog($"已手动选择 SteamLibrary 路径：{folder.Path}");
-        }
-    }
-
-    private void DetectSteamPath_Click(object sender, RoutedEventArgs e)
-    {
-        var steamPath = _steamService.DetectSteamInstallPath();
-        if (steamPath != null)
-        {
-            txtSteamPath.Text = steamPath;
-            _logService.AddLog($"已自动识别 Steam 安装路径：{steamPath}");
-        }
-        else
-        {
-            _logService.AddLog("未检测到 Steam 安装路径，请手动选择");
-        }
-    }
-
     private async void FetchFromSteamDB_Click(object sender, RoutedEventArgs e)
     {
         // 防止重复点击
@@ -369,8 +230,8 @@ public sealed partial class WutheringWavesPage : Page
 
         try
         {
-            var libraryPath = txtLibraryPath.Text.Trim();
-            var steamInstallPath = txtSteamPath.Text.Trim();
+            var libraryPath = _settings.SteamLibraryPath.Trim();
+            var steamInstallPath = _settings.SteamInstallPath.Trim();
             var steamappsPath = Path.Combine(libraryPath, "steamapps");
             var commonPath = Path.Combine(steamappsPath, "common");
             var gamePath = Path.Combine(commonPath, "Wuthering Waves");
@@ -404,7 +265,7 @@ public sealed partial class WutheringWavesPage : Page
             var acfContent = _steamService.GenerateAcfContent(
                 launcherPath,
                 txtBuildId.Text.Trim(),
-                txtSteamId.Text.Trim(),
+                _settings.SteamId.Trim(),
                 txtManifest.Text.Trim()
             );
 
@@ -644,19 +505,19 @@ public sealed partial class WutheringWavesPage : Page
 
     private bool ValidateInputs()
     {
-        if (string.IsNullOrWhiteSpace(txtSteamPath.Text))
+        if (string.IsNullOrWhiteSpace(_settings.SteamInstallPath))
         {
-            _logService.AddLog("错误: 请选择或自动识别 Steam 安装路径");
+            _logService.AddLog("错误: 请先在「设置」中配置 Steam 安装路径");
             return false;
         }
-        if (string.IsNullOrWhiteSpace(txtLibraryPath.Text))
+        if (string.IsNullOrWhiteSpace(_settings.SteamLibraryPath))
         {
-            _logService.AddLog("错误: 请选择或自动识别 SteamLibrary 路径");
+            _logService.AddLog("错误: 请先在「设置」中配置 SteamLibrary 路径");
             return false;
         }
-        if (string.IsNullOrWhiteSpace(txtSteamId.Text))
+        if (string.IsNullOrWhiteSpace(_settings.SteamId))
         {
-            _logService.AddLog("错误: 请输入 Steam ID（SteamID64）");
+            _logService.AddLog("错误: 请先在「设置」中配置 Steam ID（SteamID64）");
             return false;
         }
         if (string.IsNullOrWhiteSpace(txtBuildId.Text))
@@ -674,9 +535,7 @@ public sealed partial class WutheringWavesPage : Page
 
     private void SaveSettings()
     {
-        _settings.SteamInstallPath = txtSteamPath.Text.Trim();
-        _settings.SteamLibraryPath = txtLibraryPath.Text.Trim();
-        _settings.SteamId = txtSteamId.Text.Trim();
+        // 鸣潮页只保存鸣潮专属字段；全局字段由设置页负责保存
         _settings.BuildId = txtBuildId.Text.Trim();
         _settings.Manifest = txtManifest.Text.Trim();
         _settings.CnGameSource = rdoWeGame.IsChecked == true ? "wegame" : "official";
