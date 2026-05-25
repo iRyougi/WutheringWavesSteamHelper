@@ -3,12 +3,28 @@ using System.Text.Json;
 
 namespace WetheringWavesSteamHelper_WinUI.Services;
 
+/// <summary>
+/// 生成 ACF 所需的全部字段。鸣潮页与自定义 Manifest 页共用同一份参数模型。
+/// </summary>
+public sealed record AcfParameters(
+    string AppId,
+    string DepotId,
+    string LauncherPath,
+    string DisplayName,
+    string InstallDir,
+    string BuildId,
+    string LastOwner,
+    string Manifest,
+    string Language = "schinese");
+
 public class SteamService
 {
     private const string SteamRegistryKey = @"SOFTWARE\WOW6432Node\Valve\Steam";
     private const string SteamRegistryKey32 = @"SOFTWARE\Valve\Steam";
-    private const int AppId = 3513350;
-    private const int DepotId = 3513351;
+
+    // 鸣潮固定 AppID / DepotID（仅作为鸣潮页便捷包装使用）
+    private const int WutheringWavesAppId = 3513350;
+    private const int WutheringWavesDepotId = 3513351;
 
     public string? DetectSteamInstallPath()
     {
@@ -83,15 +99,21 @@ public class SteamService
         return paths;
     }
 
-    public async Task<(string buildId, string manifest)?> FetchSteamDbInfoAsync()
+    /// <summary>
+    /// 从 steamcmd.net 公开 API 获取指定 AppID / DepotID 的 buildid 与 manifest。
+    /// </summary>
+    public async Task<(string buildId, string manifest)?> FetchSteamDbInfoAsync(string appId, string depotId)
     {
+        if (string.IsNullOrWhiteSpace(appId) || string.IsNullOrWhiteSpace(depotId))
+            return null;
+
         try
         {
             using var httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(15);
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "WutheringWavesSteamHelper/2.0");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "WutheringWavesSteamHelper/2.2");
 
-            var url = $"https://api.steamcmd.net/v1/info/{AppId}";
+            var url = $"https://api.steamcmd.net/v1/info/{appId}";
             var response = await httpClient.GetStringAsync(url);
 
             using var doc = JsonDocument.Parse(response);
@@ -103,7 +125,7 @@ public class SteamService
                 string? buildId = null;
                 string? manifest = null;
 
-                if (data.TryGetProperty(AppId.ToString(), out var appData))
+                if (data.TryGetProperty(appId, out var appData))
                 {
                     if (appData.TryGetProperty("depots", out var depots)
                         && depots.TryGetProperty("branches", out var branches)
@@ -114,7 +136,7 @@ public class SteamService
                     }
 
                     if (appData.TryGetProperty("depots", out var depots2)
-                        && depots2.TryGetProperty(DepotId.ToString(), out var depot)
+                        && depots2.TryGetProperty(depotId, out var depot)
                         && depot.TryGetProperty("manifests", out var manifests)
                         && manifests.TryGetProperty("public", out var publicManifest))
                     {
@@ -137,6 +159,10 @@ public class SteamService
 
         return null;
     }
+
+    /// <summary>鸣潮页便捷包装：使用固定 AppID/DepotID 调用 SteamDB API。</summary>
+    public Task<(string buildId, string manifest)?> FetchSteamDbInfoAsync()
+        => FetchSteamDbInfoAsync(WutheringWavesAppId.ToString(), WutheringWavesDepotId.ToString());
 
     public string? DetectWeGameInstallPath()
     {
@@ -234,7 +260,7 @@ public class SteamService
     }
 
     /// <summary>
-    /// 生成 Steam 启动命令。
+    /// 生成 Steam 启动命令（鸣潮专用：根据安装目录结构推断 exe）。
     /// installPath：官方启动器版本为安装根目录（含 Wuthering Waves Game 子目录），
     ///              WeGame 版本为含 Client 文件夹的安装根目录。
     /// </summary>
@@ -251,28 +277,32 @@ public class SteamService
     }
 
     /// <summary>
-    /// 生成 ACF 文件内容。
-    /// launcherPath 应为 Steam 安装目录中的 steam.exe 完整路径。
+    /// 自定义 Manifest 页用：基于用户指定的 EXE 完整路径直接生成启动命令。
     /// </summary>
-    public string GenerateAcfContent(string launcherPath, string buildId, string lastOwner, string manifest)
+    public string GenerateLaunchCommandFromExe(string exePath) => $"\"{exePath}\" %command%";
+
+    /// <summary>
+    /// 参数化 ACF 内容生成。鸣潮页与自定义 Manifest 页共用。
+    /// </summary>
+    public string GenerateAcfContent(AcfParameters p)
     {
         // ACF 中路径需要用双反斜杠转义
-        var escapedLauncherPath = launcherPath.Replace("\\", "\\\\");
+        var escapedLauncherPath = p.LauncherPath.Replace("\\", "\\\\");
 
         return $@"""AppState""
 {{
-	""appid""		""3513350""
+	""appid""		""{p.AppId}""
 	""universe""		""1""
 	""LauncherPath""		""{escapedLauncherPath}""
-	""name""		""Wuthering Waves""
+	""name""		""{p.DisplayName}""
 	""StateFlags""		""4""
-	""installdir""		""Wuthering Waves""
+	""installdir""		""{p.InstallDir}""
 	""LastUpdated""		""0""
 	""LastPlayed""		""0""
 	""SizeOnDisk""		""0""
 	""StagingSize""		""0""
-	""buildid""		""{buildId}""
-	""LastOwner""		""{lastOwner}""
+	""buildid""		""{p.BuildId}""
+	""LastOwner""		""{p.LastOwner}""
 	""DownloadType""		""1""
 	""UpdateResult""		""0""
 	""BytesToDownload""		""0""
@@ -285,9 +315,9 @@ public class SteamService
 	""ScheduledAutoUpdate""		""0""
 	""InstalledDepots""
 	{{
-		""{DepotId}""
+		""{p.DepotId}""
 		{{
-			""manifest""		""{manifest}""
+			""manifest""		""{p.Manifest}""
 			""size""		""0""
 		}}
 	}}
@@ -297,13 +327,27 @@ public class SteamService
 	}}
 	""UserConfig""
 	{{
-		""language""		""schinese""
+		""language""		""{p.Language}""
 	}}
 	""MountedConfig""
 	{{
-		""language""		""schinese""
+		""language""		""{p.Language}""
 	}}
 }}
 ";
     }
+
+    /// <summary>
+    /// 鸣潮页便捷包装：保持原有调用签名不变。
+    /// </summary>
+    public string GenerateAcfContent(string launcherPath, string buildId, string lastOwner, string manifest)
+        => GenerateAcfContent(new AcfParameters(
+            AppId: WutheringWavesAppId.ToString(),
+            DepotId: WutheringWavesDepotId.ToString(),
+            LauncherPath: launcherPath,
+            DisplayName: "Wuthering Waves",
+            InstallDir: "Wuthering Waves",
+            BuildId: buildId,
+            LastOwner: lastOwner,
+            Manifest: manifest));
 }
