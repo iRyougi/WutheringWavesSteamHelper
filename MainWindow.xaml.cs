@@ -148,6 +148,9 @@ public sealed partial class MainWindow : Window
             case "WutheringWaves":
                 ContentFrame.Navigate(typeof(Views.Pages.WutheringWavesPage));
                 break;
+            case "CustomManifest":
+                ContentFrame.Navigate(typeof(Views.Pages.CustomManifestPage));
+                break;
             case "Settings":
                 ContentFrame.Navigate(typeof(Views.Pages.SettingsPage));
                 break;
