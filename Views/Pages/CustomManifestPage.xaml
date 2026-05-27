@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WetheringWavesSteamHelper_WinUI.Views.Pages.CustomManifestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
+        <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
+
+            <!-- 全局配置缺失提示（OnLoaded 判定后切换可见性） -->
+            <InfoBar x:Name="globalConfigInfoBar"
+                     Severity="Warning"
+                     Title="请先在「设置」中配置 Steam 全局参数"
+                     Message="自定义 Manifest 页依赖 Steam 安装路径、SteamLibrary 路径、SteamID 三项。"
+                     IsOpen="False"
+                     IsClosable="False"/>
+
+            <!-- 游戏标识 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="游戏标识" FontSize="16" FontWeight="SemiBold"/>
+
+                    <Grid ColumnSpacing="12" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="6">
+                            <TextBlock Text="AppID" FontWeight="Medium"/>
+                            <TextBox x:Name="txtAppId" PlaceholderText="例如 3513350"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="6">
+                            <TextBlock Text="DepotID" FontWeight="Medium"/>
+                            <TextBox x:Name="txtDepotId" PlaceholderText="例如 3513351"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="6">
+                            <TextBlock Text="显示名称" FontWeight="Medium"/>
+                            <TextBox x:Name="txtDisplayName" PlaceholderText="例如 Wuthering Waves"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="6">
+                            <TextBlock Text="安装目录名" FontWeight="Medium"/>
+                            <TextBox x:Name="txtInstallDir" PlaceholderText="例如 Wuthering Waves"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0" Spacing="6">
+                            <TextBlock Text="语言代码（ACF UserConfig.language）" FontWeight="Medium"/>
+                            <ComboBox x:Name="cmbLanguageCode" HorizontalAlignment="Stretch">
+                                <ComboBoxItem Tag="schinese" Content="schinese - 简体中文" IsSelected="True"/>
+                                <ComboBoxItem Tag="tchinese" Content="tchinese - 繁體中文"/>
+                                <ComboBoxItem Tag="english"  Content="english - English"/>
+                                <ComboBoxItem Tag="japanese" Content="japanese - 日本語"/>
+                                <ComboBoxItem Tag="koreana"  Content="koreana - 한국어"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock TextWrapping="Wrap"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="提示：可在 "/>
+                        <Run Text="steamdb.info/app/&lt;AppID&gt;/depots/" FontWeight="SemiBold"/>
+                        <Run Text=" 查询任意 Steam 游戏的 AppID / DepotID。"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- 游戏可执行文件 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="游戏可执行文件" FontSize="16" FontWeight="SemiBold"/>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txtClientExePath"
+                                 PlaceholderText="例如 D:\Games\xxx\Client-Win64-Shipping.exe"
+                                 IsReadOnly="True"/>
+                        <Button Grid.Column="1" Content="浏览" Click="BrowseClientExe_Click"/>
+                        <Button Grid.Column="2" Content="清除" Click="ClearClientExe_Click"/>
+                    </Grid>
+                    <TextBlock Text="提示：该路径用于「复制启动命令」功能，会拼接为 &quot;&lt;exe&gt;&quot; %command% 写入剪贴板。"
+                               TextWrapping="Wrap"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- BuildID 和 Manifest -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="BuildID 和 Manifest" FontSize="16" FontWeight="SemiBold"/>
+                    <Button x:Name="btnFetchSteamDB"
+                            Content="从 SteamDB 自动获取 BuildID 和 Manifest"
+                            Click="FetchFromSteamDB_Click"
+                            HorizontalAlignment="Stretch"/>
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="BuildID"/>
+                            <TextBox x:Name="txtBuildId" PlaceholderText="自动获取或手动填入"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="8">
+                            <TextBlock Text="Manifest"/>
+                            <TextBox x:Name="txtManifest" PlaceholderText="自动获取或手动填入"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 操作按钮 -->
+            <StackPanel Spacing="8">
+                <Button x:Name="btnGenerate"
+                        Content="生成配置文件（appmanifest_&lt;AppID&gt;.acf）"
+                        Style="{StaticResource AccentButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        Click="Generate_Click"/>
+                <Button x:Name="btnCopyCommand"
+                        Content="复制启动命令到剪贴板"
+                        HorizontalAlignment="Stretch"
+                        Click="CopyCommand_Click"/>
+                <Button x:Name="btnSave"
+                        Content="保存当前配置"
+                        HorizontalAlignment="Stretch"
+                        Click="Save_Click"/>
+            </StackPanel>
+
+            <!-- 运行日志 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <Grid>
+                        <TextBlock Text="运行日志" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Content="清空" HorizontalAlignment="Right" Click="ClearLog_Click"/>
+                    </Grid>
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
+                            CornerRadius="4" Padding="12" Height="200">
+                        <ScrollViewer x:Name="logScrollViewer" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="logList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="12"
+                                                   TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

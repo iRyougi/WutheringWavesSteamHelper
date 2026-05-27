@@ -10,48 +10,6 @@
     <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
         <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
 
-            <!-- Steam 安装路径 -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="16">
-                <StackPanel Spacing="12">
-                    <TextBlock Text="Steam 安装路径" FontSize="16" FontWeight="SemiBold"/>
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="txtSteamPath" PlaceholderText="Steam 安装路径（含 steam.exe）"/>
-                        <Button Grid.Column="1" Content="浏览" Click="BrowseSteamPath_Click"/>
-                        <Button Grid.Column="2" Content="自动检测" Click="DetectSteamPath_Click"/>
-                    </Grid>
-                    <TextBlock Text="提示：Steam 安装目录应包含 steam.exe 文件"
-                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                </StackPanel>
-            </Border>
-
-            <!-- Steam 游戏库路径 -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="16">
-                <StackPanel Spacing="12">
-                    <TextBlock Text="Steam 游戏库路径（SteamLibrary）" FontSize="16" FontWeight="SemiBold"/>
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="txtLibraryPath" PlaceholderText="SteamLibrary 路径（含 steamapps 子目录）"/>
-                        <Button Grid.Column="1" Content="浏览" Click="BrowseLibraryPath_Click"/>
-                        <Button Grid.Column="2" Content="自动检测" Click="DetectLibraryPath_Click"/>
-                    </Grid>
-                    <TextBlock Text="提示：选择 SteamLibrary 根目录，该目录下应有 steamapps 子目录"
-                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                </StackPanel>
-            </Border>
-
             <!-- 游戏源选择 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
@@ -93,18 +51,6 @@
                             </TextBlock>
                         </StackPanel>
                     </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- Steam ID -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="16">
-                <StackPanel Spacing="12">
-                    <TextBlock Text="Steam ID（SteamID64）" FontSize="16" FontWeight="SemiBold"/>
-                    <TextBox x:Name="txtSteamId" PlaceholderText="输入您的 SteamID64（17 位数字）"/>
-                    <TextBlock Text="获取方式：访问 steamid.io 或 steamdb.info/calculator，登录后复制 SteamID64"
-                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
             </Border>
 

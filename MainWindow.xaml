@@ -71,6 +71,11 @@
                         <FontIcon Glyph="&#xE7FC;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="自定义" Tag="CustomManifest">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7C3;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="敬请期待" Tag="Placeholder" IsEnabled="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE823;"/>

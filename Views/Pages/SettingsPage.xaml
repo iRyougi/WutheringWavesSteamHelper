@@ -13,6 +13,70 @@
             <!-- 页面标题 -->
             <TextBlock Text="设置" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,8"/>
 
+            <!-- Steam 全局配置（v2.2.0 起：路径 / 库路径 / SteamID 统一在此处管理，供所有游戏页面共享） -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Steam 全局配置" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="以下三项为所有游戏共享配置，鸣潮页与自定义 Manifest 页都使用这些值。"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               TextWrapping="Wrap"/>
+
+                    <!-- Steam 安装路径 -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Steam 安装路径" FontSize="14" FontWeight="Medium"/>
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="txtSteamPath"
+                                     PlaceholderText="Steam 安装路径（含 steam.exe）"
+                                     LostFocus="SteamPath_LostFocus"/>
+                            <Button Grid.Column="1" Content="浏览" Click="BrowseSteamPath_Click"/>
+                            <Button Grid.Column="2" Content="自动检测" Click="DetectSteamPath_Click"/>
+                        </Grid>
+                        <TextBlock Text="提示：Steam 安装目录应包含 steam.exe 文件"
+                                   FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <NavigationViewItemSeparator/>
+
+                    <!-- Steam 游戏库路径 -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Steam 游戏库路径（SteamLibrary）" FontSize="14" FontWeight="Medium"/>
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="txtLibraryPath"
+                                     PlaceholderText="SteamLibrary 路径（含 steamapps 子目录）"
+                                     LostFocus="LibraryPath_LostFocus"/>
+                            <Button Grid.Column="1" Content="浏览" Click="BrowseLibraryPath_Click"/>
+                            <Button Grid.Column="2" Content="自动检测" Click="DetectLibraryPath_Click"/>
+                        </Grid>
+                        <TextBlock Text="提示：选择 SteamLibrary 根目录，该目录下应有 steamapps 子目录"
+                                   FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <NavigationViewItemSeparator/>
+
+                    <!-- Steam ID -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Steam ID（SteamID64）" FontSize="14" FontWeight="Medium"/>
+                        <TextBox x:Name="txtSteamId"
+                                 PlaceholderText="输入您的 SteamID64（17 位数字）"
+                                 LostFocus="SteamId_LostFocus"/>
+                        <TextBlock Text="获取方式：访问 steamid.io 或 steamdb.info/calculator，登录后复制 SteamID64"
+                                   FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- 更新通知卡片（默认隐藏，检测到新版本后显示） -->
             <Border x:Name="updateCard"
                     Visibility="Collapsed"

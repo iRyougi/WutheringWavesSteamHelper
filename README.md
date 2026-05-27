@@ -5,7 +5,15 @@
 
 ## 简介
 
-WutheringWavesSteamHelper 是一个通过生成必要的配置文件，让玩家可以通过 Steam 客户端启动和管理国服鸣潮
+WutheringWavesSteamHelper 是一个通过生成必要的配置文件，让玩家可以通过 Steam 客户端启动和管理国服鸣潮。
+
+自 v2.2.0 起，应用同时支持「自定义 Manifest」页面，允许用户为任意 Steam 游戏自定义 AppID / DepotID / BuildID / Manifest 等字段，生成对应 ACF 配置并复制启动命令。
+
+## 主要功能
+
+- **鸣潮专属页面**：一键生成鸣潮 ACF 配置 / 复制国服客户端启动命令 / 打开官方启动器
+- **自定义 Manifest 页（v2.2.0 新增）**：自由填写任意游戏的 AppID/DepotID/BuildID/Manifest，生成 `appmanifest_<AppID>.acf`
+- **Steam 全局配置**：Steam 安装路径、SteamLibrary 路径、SteamID 在「设置」中统一管理，全应用共享
 
 ## 系统要求
 
