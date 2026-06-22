@@ -45,9 +45,26 @@ public class AppSettings
                    || !string.IsNullOrWhiteSpace(current.ClientExePath);
 
         if (hasData)
-            CustomManifestPresets.Add(current);
+        {
+            // 复制一份纳入列表，避免与 CurrentCustomManifest 共享同一引用（别名隐患）
+            CustomManifestPresets.Add(new CustomManifestPreset
+            {
+                Name = string.IsNullOrWhiteSpace(current.Name) ? "默认" : current.Name,
+                AppId = current.AppId,
+                DepotId = current.DepotId,
+                BuildId = current.BuildId,
+                Manifest = current.Manifest,
+                GameDisplayName = current.GameDisplayName,
+                InstallDir = current.InstallDir,
+                ClientExePath = current.ClientExePath,
+                ExecutableFileName = current.ExecutableFileName,
+                Language = current.Language,
+            });
+        }
         else
+        {
             CustomManifestPresets.Add(new CustomManifestPreset { Name = "默认" });
+        }
     }
 }
 

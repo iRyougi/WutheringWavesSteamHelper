@@ -152,7 +152,9 @@ public sealed partial class CustomManifestPage : Page
             return;
         }
 
+        // 在 await 前快照索引，避免对话框期间列表被其它处理器修改导致错位
         var newIndex = cmbPreset.SelectedIndex;
+        var prevIndex = _lastSelectedIndex;
         if (newIndex < 0 || newIndex >= _presets.Count)
         {
             _lastSelectedIndex = newIndex;
@@ -160,9 +162,9 @@ public sealed partial class CustomManifestPage : Page
         }
 
         // 切换前若上一个预设有未保存改动，弹确认
-        if (_lastSelectedIndex >= 0 && _lastSelectedIndex < _presets.Count
-            && _lastSelectedIndex != newIndex
-            && IsDirtyAgainst(_presets[_lastSelectedIndex]))
+        if (prevIndex >= 0 && prevIndex < _presets.Count
+            && prevIndex != newIndex
+            && IsDirtyAgainst(_presets[prevIndex]))
         {
             var dialog = new ContentDialog
             {
@@ -174,12 +176,20 @@ public sealed partial class CustomManifestPage : Page
             };
             if (await dialog.ShowAsync() != ContentDialogResult.Primary)
             {
-                // 回滚选择
+                // 回滚选择（校验快照索引在 await 后仍有效）
                 _suppressSelectionChanged = true;
-                cmbPreset.SelectedIndex = _lastSelectedIndex;
+                cmbPreset.SelectedIndex = (prevIndex >= 0 && prevIndex < _presets.Count) ? prevIndex : 0;
                 _suppressSelectionChanged = false;
+                _lastSelectedIndex = cmbPreset.SelectedIndex;
                 return;
             }
+        }
+
+        // await 后列表可能已变化，重新校验目标索引
+        if (newIndex < 0 || newIndex >= _presets.Count)
+        {
+            _lastSelectedIndex = cmbPreset.SelectedIndex;
+            return;
         }
 
         _lastSelectedIndex = newIndex;

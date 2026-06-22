@@ -299,6 +299,10 @@ public class SteamService
     public PlaceholderResult EnsureGameDirAndPlaceholder(
         string steamLibraryPath, string installDir, string exeFileName)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(steamLibraryPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(installDir);
+        ArgumentException.ThrowIfNullOrWhiteSpace(exeFileName);
+
         var gameDir = Path.Combine(steamLibraryPath, "steamapps", "common", installDir);
         var exePath = Path.Combine(gameDir, exeFileName);
 
