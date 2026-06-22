@@ -7,9 +7,8 @@
 #define MyAppPublisher "KAMITSUBAKI METAVERSE R&D DIV"
 #define MyAppURL "https://www.iryougi.com/index.php/wutheringwavessteamhelper/"
 #define MyAppExeName "WetheringWavesSteamHelper_WinUI.exe"
-#define MyAppAssocName MyAppName + " File"
-#define MyAppAssocExt ".myp"
-#define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
+; 发布输出目录（相对于本脚本所在的仓库根目录），便于在任意机器/CI 上编译
+#define SourceDir "bin\win-x64\publish\win-x64\win-x64"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -32,7 +31,6 @@ ArchitecturesAllowed=x64compatible
 ; meaning it should use the native 64-bit Program Files directory and
 ; the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64compatible
-ChangesAssociations=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
@@ -53,59 +51,53 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "{app}\logs"; Permissions: users-modify
 
 [Files]
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\CommunityToolkit.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Graphics.Imaging.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.InteractiveExperiences.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.ML.OnnxRuntime.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Security.Authentication.OAuth.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Web.WebView2.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Web.WebView2.Core.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AI.ContentSafety.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AI.Foundation.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AI.Imaging.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AI.MachineLearning.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AI.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AI.Text.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.ApplicationModel.Background.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.ApplicationModel.Background.UniversalBGTask.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.ApplicationModel.Resources.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AppLifecycle.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AppNotifications.Builder.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.AppNotifications.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.BadgeNotifications.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Foundation.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Management.Deployment.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Media.Capture.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.PushNotifications.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.SDK.NET.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Security.AccessControl.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Storage.Pickers.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Storage.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.System.Power.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.System.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.Windows.Widgets.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.WindowsAppRuntime.Bootstrap.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.WindowsAppRuntime.Bootstrap.Net.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Microsoft.WinUI.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\System.Numerics.Tensors.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WebView2Loader.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WetheringWavesSteamHelper_WinUI.deps.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WetheringWavesSteamHelper_WinUI.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WetheringWavesSteamHelper_WinUI.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WetheringWavesSteamHelper_WinUI.pri"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WetheringWavesSteamHelper_WinUI.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\WinRT.Runtime.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "G:\iRyougi\WutheringWavesSteamHelper\bin\win-x64\publish\win-x64\win-x64\Assets\*"; DestDir: "{app}\Assets"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourceDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\CommunityToolkit.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Graphics.Imaging.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.InteractiveExperiences.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.ML.OnnxRuntime.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Security.Authentication.OAuth.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Web.WebView2.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Web.WebView2.Core.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AI.ContentSafety.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AI.Foundation.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AI.Imaging.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AI.MachineLearning.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AI.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AI.Text.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.ApplicationModel.Background.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.ApplicationModel.Background.UniversalBGTask.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.ApplicationModel.Resources.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AppLifecycle.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AppNotifications.Builder.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.AppNotifications.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.BadgeNotifications.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Foundation.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Management.Deployment.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Media.Capture.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.PushNotifications.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.SDK.NET.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Security.AccessControl.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Storage.Pickers.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Storage.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.System.Power.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.System.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.Windows.Widgets.Projection.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.WindowsAppRuntime.Bootstrap.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.WindowsAppRuntime.Bootstrap.Net.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Microsoft.WinUI.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\System.Numerics.Tensors.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WebView2Loader.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WetheringWavesSteamHelper_WinUI.deps.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WetheringWavesSteamHelper_WinUI.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WetheringWavesSteamHelper_WinUI.pdb"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WetheringWavesSteamHelper_WinUI.pri"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WetheringWavesSteamHelper_WinUI.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\WinRT.Runtime.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Assets\*"; DestDir: "{app}\Assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
-[Registry]
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
