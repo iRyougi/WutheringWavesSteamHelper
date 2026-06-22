@@ -1,7 +1,7 @@
 {
-  "version": "2.2.0",
-  "releaseDate": "2026-05-26",
-  "message": "新增自定义Mainfast界面，并且将Steam相关设置移动到设置界面统一管理",
+  "version": "2.3.0",
+  "releaseDate": "2026-06-22",
+  "message": "自定义Manifest页修复占位EXE生成问题(#23)，并新增多预设管理（新建/另存为/重命名/删除）",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
     "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/latest"
