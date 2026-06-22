@@ -17,6 +17,15 @@ public sealed record AcfParameters(
     string Manifest,
     string Language = "schinese");
 
+/// <summary>
+/// <see cref="SteamService.EnsureGameDirAndPlaceholder"/> 的结果，供调用方写日志。
+/// </summary>
+public sealed record PlaceholderResult(
+    string GameDirPath,    // common\<installDir> 完整路径
+    string ExePath,        // 占位 exe 完整路径
+    bool DirCreated,       // 是否新建了目录
+    bool ExeCreated);      // 是否新建了占位 exe（false 表示已存在、跳过）
+
 public class SteamService
 {
     private const string SteamRegistryKey = @"SOFTWARE\WOW6432Node\Valve\Steam";
@@ -280,6 +289,36 @@ public class SteamService
     /// 自定义 Manifest 页用：基于用户指定的 EXE 完整路径直接生成启动命令。
     /// </summary>
     public string GenerateLaunchCommandFromExe(string exePath) => $"\"{exePath}\" %command%";
+
+    /// <summary>
+    /// 确保 common\&lt;installDir&gt; 目录存在并放置占位 exe（仅当不存在时创建，绝不覆盖真实文件）。
+    /// </summary>
+    /// <param name="steamLibraryPath">Steam 库根路径（其下含 steamapps）。</param>
+    /// <param name="installDir">ACF 中的 installdir，即 common 下的子目录名。</param>
+    /// <param name="exeFileName">占位 exe 文件名（须等于 Steam 登记 exe 名）。</param>
+    public PlaceholderResult EnsureGameDirAndPlaceholder(
+        string steamLibraryPath, string installDir, string exeFileName)
+    {
+        var gameDir = Path.Combine(steamLibraryPath, "steamapps", "common", installDir);
+        var exePath = Path.Combine(gameDir, exeFileName);
+
+        var dirCreated = false;
+        if (!Directory.Exists(gameDir))
+        {
+            Directory.CreateDirectory(gameDir);
+            dirCreated = true;
+        }
+
+        var exeCreated = false;
+        // 仅在占位 EXE 不存在时创建（不覆盖真实 EXE）
+        if (!File.Exists(exePath))
+        {
+            File.Create(exePath).Dispose();
+            exeCreated = true;
+        }
+
+        return new PlaceholderResult(gameDir, exePath, dirCreated, exeCreated);
+    }
 
     /// <summary>
     /// 参数化 ACF 内容生成。鸣潮页与自定义 Manifest 页共用。
