@@ -18,6 +18,25 @@
                      IsOpen="False"
                      IsClosable="False"/>
 
+            <!-- 预设 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="预设" FontSize="16" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="cmbPreset"
+                              HorizontalAlignment="Stretch"
+                              DisplayMemberPath="Name"
+                              SelectionChanged="Preset_SelectionChanged"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="btnNewPreset" Content="新建" Click="NewPreset_Click"/>
+                        <Button x:Name="btnSaveAsPreset" Content="另存为" Click="SaveAsPreset_Click"/>
+                        <Button x:Name="btnRenamePreset" Content="重命名" Click="RenamePreset_Click"/>
+                        <Button x:Name="btnDeletePreset" Content="删除" Click="DeletePreset_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- 游戏标识 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
@@ -94,6 +113,15 @@
                         <Button Grid.Column="2" Content="清除" Click="ClearClientExe_Click"/>
                     </Grid>
                     <TextBlock Text="提示：该路径用于「复制启动命令」功能，会拼接为 &quot;&lt;exe&gt;&quot; %command% 写入剪贴板。"
+                               TextWrapping="Wrap"
+                               FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Steam 占位文件名" FontWeight="Medium"/>
+                        <TextBox x:Name="txtExecutableFileName"
+                                 PlaceholderText="留空则用 &lt;显示名&gt;.exe"/>
+                    </StackPanel>
+                    <TextBlock Text="提示：该文件名须等于 Steam appinfo 登记的可执行文件名，否则 Steam 无法启动；它与上方的真实 EXE 路径是两个不同概念。"
                                TextWrapping="Wrap"
                                FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
