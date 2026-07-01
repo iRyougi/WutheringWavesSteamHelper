@@ -362,7 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-#×Ô¶¨ÒåºöÂÔÎÄ¼ş
+#ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 *.acf
 /Docs/*.acf
 /Docs/apprequirement.md
@@ -370,3 +370,4 @@ FodyWeavers.xsd
 *.iss
 Output/
 docs/
+.worktrees/
