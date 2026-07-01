@@ -567,7 +567,14 @@ public sealed partial class WutheringWavesPage : Page
         catch (Exception ex)
         {
             _logService.AddLog($"[{context}] 文件选择框打开失败：{ex.GetType().Name} - {ex.Message}");
-            await ShowInfoAsync($"无法打开文件选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}\n\n您可以尝试直接在路径输入框中粘贴文件路径。");
+            try
+            {
+                await ShowInfoAsync($"无法打开文件选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}\n\n您可以尝试直接在路径输入框中粘贴文件路径。");
+            }
+            catch (Exception dialogEx)
+            {
+                _logService.AddLog($"[{context}] 显示错误提示弹窗也失败了：{dialogEx.GetType().Name} - {dialogEx.Message}");
+            }
             return null;
         }
     }
@@ -581,7 +588,14 @@ public sealed partial class WutheringWavesPage : Page
         catch (Exception ex)
         {
             _logService.AddLog($"[{context}] 文件夹选择框打开失败：{ex.GetType().Name} - {ex.Message}");
-            await ShowInfoAsync($"无法打开文件夹选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}");
+            try
+            {
+                await ShowInfoAsync($"无法打开文件夹选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}");
+            }
+            catch (Exception dialogEx)
+            {
+                _logService.AddLog($"[{context}] 显示错误提示弹窗也失败了：{dialogEx.GetType().Name} - {dialogEx.Message}");
+            }
             return null;
         }
     }
