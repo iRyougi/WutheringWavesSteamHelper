@@ -19,6 +19,9 @@ public sealed partial class CustomManifestPage : Page
     private List<CustomManifestPreset> _presets = new();
     private bool _suppressSelectionChanged;
 
+    // 是否已在本次页面生命周期内提示过手动输入路径的风险
+    private bool _clientExePathWarningShown = false;
+
     private NotifyCollectionChangedEventHandler? _logScrollHandler;
 
     public CustomManifestPage()
@@ -315,7 +318,7 @@ public sealed partial class CustomManifestPage : Page
         picker.FileTypeFilter.Add(".exe");
         picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
 
-        var file = await picker.PickSingleFileAsync();
+        var file = await PickFileSafelyAsync(picker, "自定义页-浏览客户端EXE");
         if (file == null) return;
 
         txtClientExePath.Text = file.Path;
@@ -613,6 +616,42 @@ public sealed partial class CustomManifestPage : Page
     // ── 日志 ──────────────────────────────────────────────────────────────────
 
     private void ClearLog_Click(object sender, RoutedEventArgs e) => _logService.Clear();
+
+    private async void ClientExePath_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (_clientExePathWarningShown) return;
+        _clientExePathWarningShown = true;
+
+        var dialog = new ContentDialog
+        {
+            Title = "手动输入路径",
+            Content = "请确保填写的是正确的游戏可执行文件路径。路径错误会导致游戏无法启动；如果填的是其他程序的路径，Steam 启动时会执行那个程序而不是游戏。建议优先使用「浏览」按钮选择文件。",
+            CloseButtonText = "知道了",
+            XamlRoot = XamlRoot
+        };
+        await dialog.ShowAsync();
+    }
+
+    private async Task<Windows.Storage.StorageFile?> PickFileSafelyAsync(FileOpenPicker picker, string context)
+    {
+        try
+        {
+            return await picker.PickSingleFileAsync();
+        }
+        catch (Exception ex)
+        {
+            _logService.AddLog($"[{context}] 文件选择框打开失败：{ex.GetType().Name} - {ex.Message}");
+            try
+            {
+                await ShowInfoAsync($"无法打开文件选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}\n\n您可以尝试直接在路径输入框中粘贴文件路径。");
+            }
+            catch (Exception dialogEx)
+            {
+                _logService.AddLog($"[{context}] 显示错误提示弹窗也失败了：{dialogEx.GetType().Name} - {dialogEx.Message}");
+            }
+            return null;
+        }
+    }
 
     private async Task ShowInfoAsync(string message)
     {
