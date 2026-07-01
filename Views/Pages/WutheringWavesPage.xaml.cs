@@ -346,7 +346,7 @@ public sealed partial class WutheringWavesPage : Page
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
                 picker.FileTypeFilter.Add("*");
-                var folder = await picker.PickSingleFolderAsync();
+                var folder = await PickFolderSafelyAsync(picker, "鸣潮页-手动选择WeGame安装目录");
                 if (folder == null) return;
 
                 var exePath = Path.Combine(folder.Path, "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
@@ -373,7 +373,7 @@ public sealed partial class WutheringWavesPage : Page
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
                 picker.FileTypeFilter.Add("*");
-                var folder = await picker.PickSingleFolderAsync();
+                var folder = await PickFolderSafelyAsync(picker, "鸣潮页-手动选择官服安装目录");
                 if (folder == null) return;
 
                 var exePath = Path.Combine(folder.Path, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
@@ -460,7 +460,7 @@ public sealed partial class WutheringWavesPage : Page
             picker.FileTypeFilter.Add(".exe");
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
 
-            var file = await picker.PickSingleFileAsync();
+            var file = await PickFileSafelyAsync(picker, "鸣潮页-手动选择官方启动器");
             if (file == null) return;
 
             if (!file.Name.Equals("launcher.exe", StringComparison.OrdinalIgnoreCase))
