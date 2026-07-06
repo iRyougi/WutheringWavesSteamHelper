@@ -1,7 +1,8 @@
 {
-  "version": "2.3.0",
-  "releaseDate": "2026-06-22",
-  "message": "自定义Manifest页修复占位EXE生成问题(#23)，并新增多预设管理（新建/另存为/重命名/删除）",
+  "version": "2.3.1",
+  "releaseDate": "2026-07-06",
+  "availableAfter": "2026-07-06T15:00:00+08:00",
+  "message": "修复鸣潮页/自定义Manifest页手动选择客户端路径不弹出选择器的问题(#26)，允许手动编辑路径并加固选择器异常处理",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
     "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/latest"
