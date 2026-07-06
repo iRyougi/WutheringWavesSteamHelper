@@ -13,6 +13,36 @@
             <!-- 页面标题 -->
             <TextBlock Text="设置" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,8"/>
 
+            <!-- 更新通知卡片（默认隐藏，检测到新版本后显示） -->
+            <Border x:Name="updateCard"
+                    Visibility="Collapsed"
+                    CornerRadius="8" Padding="16">
+                <Border.Background>
+                    <SolidColorBrush Color="#1A2D6B"/>
+                </Border.Background>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Spacing="6">
+                        <TextBlock x:Name="txtUpdateTitle"
+                                   Text="发现新版本"
+                                   FontSize="15" FontWeight="SemiBold"
+                                   Foreground="#60CDFF"/>
+                        <TextBlock x:Name="txtUpdateMessage"
+                                   FontSize="13" TextWrapping="Wrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                    <Button x:Name="btnDownload"
+                            Grid.Column="1"
+                            Content="立即下载"
+                            Style="{StaticResource AccentButtonStyle}"
+                            VerticalAlignment="Center"
+                            Click="BtnDownload_Click"/>
+                </Grid>
+            </Border>
+
             <!-- Steam 全局配置（v2.2.0 起：路径 / 库路径 / SteamID 统一在此处管理，供所有游戏页面共享） -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1"
@@ -75,36 +105,6 @@
                                    FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     </StackPanel>
                 </StackPanel>
-            </Border>
-
-            <!-- 更新通知卡片（默认隐藏，检测到新版本后显示） -->
-            <Border x:Name="updateCard"
-                    Visibility="Collapsed"
-                    CornerRadius="8" Padding="16">
-                <Border.Background>
-                    <SolidColorBrush Color="#1A2D6B"/>
-                </Border.Background>
-                <Grid ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Spacing="6">
-                        <TextBlock x:Name="txtUpdateTitle"
-                                   Text="发现新版本"
-                                   FontSize="15" FontWeight="SemiBold"
-                                   Foreground="#60CDFF"/>
-                        <TextBlock x:Name="txtUpdateMessage"
-                                   FontSize="13" TextWrapping="Wrap"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </StackPanel>
-                    <Button x:Name="btnDownload"
-                            Grid.Column="1"
-                            Content="立即下载"
-                            Style="{StaticResource AccentButtonStyle}"
-                            VerticalAlignment="Center"
-                            Click="BtnDownload_Click"/>
-                </Grid>
             </Border>
 
             <!-- 开发者选项 -->

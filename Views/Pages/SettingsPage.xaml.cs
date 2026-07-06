@@ -301,7 +301,13 @@ public sealed partial class SettingsPage : Page
         {
             btnCheckUpdate.IsEnabled = true;
             btnCheckUpdate.Content = "检查更新";
-            txtCheckUpdateStatus.Text = hadUpdate ? "已发现新版本，请查看上方通知。" : "当前已是最新版本。";
+
+            var gateUntil = UpdateService.Instance.PendingGateUntil;
+            txtCheckUpdateStatus.Text = hadUpdate
+                ? "已发现新版本，请查看上方通知。"
+                : gateUntil is not null
+                    ? $"新版本计划于 {gateUntil.Value.LocalDateTime:yyyy-MM-dd HH:mm} 开放更新，请稍后再试。"
+                    : "当前已是最新版本。";
         });
     }
 

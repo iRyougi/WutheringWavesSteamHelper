@@ -26,6 +26,13 @@ public sealed class VersionInfo
     /// <summary>是否强制更新（锁定 UI 直到用户前往下载）</summary>
     [JsonPropertyName("forceUpdate")]
     public bool ForceUpdate { get; init; }
+
+    /// <summary>
+    /// 更新通知的生效时间（ISO 8601 带时区偏移，如 "2026-07-06T18:00:00+08:00"）。
+    /// 留空或无法解析 = 不限制，与旧版本行为一致。
+    /// </summary>
+    [JsonPropertyName("availableAfter")]
+    public string? AvailableAfter { get; init; }
 }
 
 /// <summary>
