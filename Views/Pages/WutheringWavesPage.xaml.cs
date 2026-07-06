@@ -18,8 +18,8 @@ public sealed partial class WutheringWavesPage : Page
     // 启动初始化期间禁止触发游戏源检测
     private bool _sourceChanging = true;
 
-    // 用户手动选择的客户端 exe 路径（null 表示使用自动检测）
-    private string? _manualClientExePath = null;
+    // 是否已在本次页面生命周期内提示过手动输入路径的风险
+    private bool _clientExePathWarningShown = false;
 
     // 日志 CollectionChanged handler，用于在 Unloaded 时取消订阅
     private NotifyCollectionChangedEventHandler? _logScrollHandler;
@@ -149,7 +149,7 @@ public sealed partial class WutheringWavesPage : Page
         picker.FileTypeFilter.Add(".exe");
         picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
 
-        var file = await picker.PickSingleFileAsync();
+        var file = await PickFileSafelyAsync(picker, "鸣潮页-手动选择客户端");
         if (file == null) return;
 
         // 必须选择 .exe 文件（picker 已过滤，此处双重确认）
@@ -173,14 +173,12 @@ public sealed partial class WutheringWavesPage : Page
             if (await confirmDialog.ShowAsync() != ContentDialogResult.Primary) return;
         }
 
-        _manualClientExePath = file.Path;
         txtClientExePath.Text = file.Path;
         _logService.AddLog($"已手动指定客户端路径：{file.Path}");
     }
 
     private void ClearClientExe_Click(object sender, RoutedEventArgs e)
     {
-        _manualClientExePath = null;
         txtClientExePath.Text = string.Empty;
         _logService.AddLog("已清除手动指定的客户端路径，将使用自动检测");
     }
@@ -318,12 +316,13 @@ public sealed partial class WutheringWavesPage : Page
         string? selectedPath = null;
 
         // 如果用户已手动指定客户端 exe，优先使用
-        if (!string.IsNullOrEmpty(_manualClientExePath) && File.Exists(_manualClientExePath))
+        var manualClientExePath = txtClientExePath.Text.Trim();
+        if (!string.IsNullOrEmpty(manualClientExePath) && File.Exists(manualClientExePath))
         {
             // 从 exe 路径推导出游戏根目录
             // 官方：...\Wuthering Waves Game\Client\Binaries\Win64\Client-Win64-Shipping.exe → ...\Wuthering Waves Game 的上级
             // WeGame：...\Client\Binaries\Win64\Client-Win64-Shipping.exe → Client 的上级
-            var exeDir = Path.GetDirectoryName(_manualClientExePath)!;  // Win64
+            var exeDir = Path.GetDirectoryName(manualClientExePath)!;   // Win64
             var binariesDir = Path.GetDirectoryName(exeDir)!;           // Binaries
             var clientDir = Path.GetDirectoryName(binariesDir)!;        // Client
             var gameRootDir = Path.GetDirectoryName(clientDir)!;        // 游戏根目录
@@ -347,7 +346,7 @@ public sealed partial class WutheringWavesPage : Page
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
                 picker.FileTypeFilter.Add("*");
-                var folder = await picker.PickSingleFolderAsync();
+                var folder = await PickFolderSafelyAsync(picker, "鸣潮页-手动选择WeGame安装目录");
                 if (folder == null) return;
 
                 var exePath = Path.Combine(folder.Path, "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
@@ -374,7 +373,7 @@ public sealed partial class WutheringWavesPage : Page
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
                 picker.FileTypeFilter.Add("*");
-                var folder = await picker.PickSingleFolderAsync();
+                var folder = await PickFolderSafelyAsync(picker, "鸣潮页-手动选择官服安装目录");
                 if (folder == null) return;
 
                 var exePath = Path.Combine(folder.Path, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
@@ -461,7 +460,7 @@ public sealed partial class WutheringWavesPage : Page
             picker.FileTypeFilter.Add(".exe");
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
 
-            var file = await picker.PickSingleFileAsync();
+            var file = await PickFileSafelyAsync(picker, "鸣潮页-手动选择官方启动器");
             if (file == null) return;
 
             if (!file.Name.Equals("launcher.exe", StringComparison.OrdinalIgnoreCase))
@@ -542,6 +541,63 @@ public sealed partial class WutheringWavesPage : Page
 
         if (!_settingsService.Save(_settings))
             _logService.AddLog("[警告] 设置保存失败，下次启动将无法自动填入");
+    }
+
+    private async void ClientExePath_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (_clientExePathWarningShown) return;
+        _clientExePathWarningShown = true;
+
+        var dialog = new ContentDialog
+        {
+            Title = "手动输入路径",
+            Content = "请确保填写的是正确的游戏可执行文件路径。路径错误会导致游戏无法启动；如果填的是其他程序的路径，Steam 启动时会执行那个程序而不是游戏。建议优先使用「手动选择」按钮选择文件。",
+            CloseButtonText = "知道了",
+            XamlRoot = XamlRoot
+        };
+        await dialog.ShowAsync();
+    }
+
+    private async Task<Windows.Storage.StorageFile?> PickFileSafelyAsync(Windows.Storage.Pickers.FileOpenPicker picker, string context)
+    {
+        try
+        {
+            return await picker.PickSingleFileAsync();
+        }
+        catch (Exception ex)
+        {
+            _logService.AddLog($"[{context}] 文件选择框打开失败：{ex.GetType().Name} - {ex.Message}");
+            try
+            {
+                await ShowInfoAsync($"无法打开文件选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}\n\n您可以尝试直接在路径输入框中粘贴文件路径。");
+            }
+            catch (Exception dialogEx)
+            {
+                _logService.AddLog($"[{context}] 显示错误提示弹窗也失败了：{dialogEx.GetType().Name} - {dialogEx.Message}");
+            }
+            return null;
+        }
+    }
+
+    private async Task<Windows.Storage.StorageFolder?> PickFolderSafelyAsync(FolderPicker picker, string context)
+    {
+        try
+        {
+            return await picker.PickSingleFolderAsync();
+        }
+        catch (Exception ex)
+        {
+            _logService.AddLog($"[{context}] 文件夹选择框打开失败：{ex.GetType().Name} - {ex.Message}");
+            try
+            {
+                await ShowInfoAsync($"无法打开文件夹选择框，这通常是系统 Shell 组件异常导致的。\n\n错误信息：{ex.Message}");
+            }
+            catch (Exception dialogEx)
+            {
+                _logService.AddLog($"[{context}] 显示错误提示弹窗也失败了：{dialogEx.GetType().Name} - {dialogEx.Message}");
+            }
+            return null;
+        }
     }
 
     private async Task ShowInfoAsync(string message)

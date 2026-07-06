@@ -108,7 +108,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="txtClientExePath"
                                  PlaceholderText="例如 D:\Games\xxx\Client-Win64-Shipping.exe"
-                                 IsReadOnly="True"/>
+                                 GotFocus="ClientExePath_GotFocus"/>
                         <Button Grid.Column="1" Content="浏览" Click="BrowseClientExe_Click"/>
                         <Button Grid.Column="2" Content="清除" Click="ClearClientExe_Click"/>
                     </Grid>

@@ -48,6 +48,12 @@ public sealed class UpdateService
     private bool    _cachedForceUpdate;
     public  bool    HasPendingUpdate { get; private set; }
 
+    /// <summary>
+    /// 若最近一次检查发现了新版本，但尚未到达 version.json 里的 availableAfter 时间，
+    /// 记录该时间供 UI 展示"计划于 X 开放更新"；未命中闸门时为 null。
+    /// </summary>
+    public DateTimeOffset? PendingGateUntil { get; private set; }
+
     // ── HTTP 客户端（复用） ────────────────────────────────────────────────────
     private static readonly HttpClient _httpClient = new(new HttpClientHandler
     {
@@ -78,6 +84,8 @@ public sealed class UpdateService
     {
         try
         {
+            PendingGateUntil = null;
+
             bool debug = IsDebugMode;
             bool beta  = IsBetaChannel;
 
@@ -121,6 +129,17 @@ public sealed class UpdateService
             else
             {
                 // 正式渠道：主版本相同即为最新
+                return;
+            }
+
+            // 定时生效闸门：Debug 模式豁免；否则若设置了 availableAfter 且尚未到达，暂缓通知
+            if (!debug
+                && !string.IsNullOrWhiteSpace(info.AvailableAfter)
+                && DateTimeOffset.TryParse(info.AvailableAfter, System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out var gateTime)
+                && DateTimeOffset.Now < gateTime)
+            {
+                PendingGateUntil = gateTime;
                 return;
             }
 
