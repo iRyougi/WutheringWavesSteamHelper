@@ -402,12 +402,14 @@ public sealed partial class CustomManifestPage : Page
         else if (!exeFileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
             exeFileName += ".exe";
 
-        if (exeFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+        if (!TryValidatePlaceholderExeName(exeFileName, out var exeNameError))
         {
-            _logService.AddLog($"[自定义页] 错误: 占位文件名含非法字符：{exeFileName}");
-            await ShowInfoAsync($"Steam 占位文件名含非法字符：\n{exeFileName}\n\n请修正后重试。");
+            _logService.AddLog($"[自定义页] 错误: 占位文件名不合法：{exeFileName}（{exeNameError}）");
+            await ShowInfoAsync($"Steam 占位文件名不合法：\n{exeFileName}\n\n{exeNameError}\n\n请修正后重试。");
             return;
         }
+        // 统一子目录分隔符（部分游戏的 Steam Executable 登记在子目录中，例如 "Sub/Launcher.exe"）
+        exeFileName = Path.Combine(exeFileName.Split('/', '\\'));
 
         btnGenerate.IsEnabled = false;
         try
@@ -558,6 +560,40 @@ public sealed partial class CustomManifestPage : Page
     }
 
     // ── 校验 ──────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// 校验 Steam 占位文件名。部分游戏的 Steam appinfo Executable 字段登记在安装目录的子目录中
+    /// （例如 "Sub/Launcher.exe"），因此允许路径分隔符，但按分段校验以阻止绝对路径和目录穿越（issue #29）。
+    /// </summary>
+    private static bool TryValidatePlaceholderExeName(string exeFileName, out string error)
+    {
+        error = string.Empty;
+
+        if (Path.IsPathRooted(exeFileName))
+        {
+            error = "不能是绝对路径";
+            return false;
+        }
+
+        var segments = exeFileName.Split('/', '\\');
+        var invalidChars = Path.GetInvalidFileNameChars();
+
+        foreach (var segment in segments)
+        {
+            if (string.IsNullOrEmpty(segment) || segment is "." or "..")
+            {
+                error = $"路径片段不合法：\"{segment}\"";
+                return false;
+            }
+            if (segment.IndexOfAny(invalidChars) >= 0)
+            {
+                error = $"包含非法字符：\"{segment}\"";
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private bool ValidateForGenerate()
     {
