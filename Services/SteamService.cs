@@ -304,12 +304,15 @@ public class SteamService
         ArgumentException.ThrowIfNullOrWhiteSpace(exeFileName);
 
         var gameDir = Path.Combine(steamLibraryPath, "steamapps", "common", installDir);
+        // exeFileName 可能含子目录分隔符（例如部分游戏的 Steam Executable 登记为 "Sub/Launcher.exe"）
         var exePath = Path.Combine(gameDir, exeFileName);
+        var exeParentDir = Path.GetDirectoryName(exePath)!;
 
-        var dirCreated = false;
-        if (!Directory.Exists(gameDir))
+        // 创建游戏目录本身，以及占位 EXE 所在的子目录（若 exeFileName 带路径）
+        var dirCreated = !Directory.Exists(gameDir);
+        if (!Directory.Exists(exeParentDir))
         {
-            Directory.CreateDirectory(gameDir);
+            Directory.CreateDirectory(exeParentDir);
             dirCreated = true;
         }
 
