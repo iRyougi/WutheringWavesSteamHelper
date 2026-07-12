@@ -12,7 +12,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsAppSdkDeploymentManagerInitialize>false</WindowsAppSdkDeploymentManagerInitialize>
     <Nullable>enable</Nullable>
-    <Version>2.3.1</Version>
+    <Version>2.3.2</Version>
     <Company>KAMITSUBAKI STUDIO</Company>
 	<ApplicationIcon>Assets\Icons\WutheringWavesSteamHelper.ico</ApplicationIcon>  
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
