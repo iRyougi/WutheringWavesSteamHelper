@@ -30,6 +30,12 @@ WutheringWavesSteamHelper 是一个通过生成必要的配置文件，让玩家
 - **游戏 AppID**：3513350
 - **主要 Depot**：3513351
 
+## 赞助
+
+如果这个工具帮到了你，欢迎请开发者喝杯奶茶～
+
+<img src=".github/sponsor/wechat-reward.jpg" alt="微信赞赏码" width="300" />
+
 ## 免责声明
 
 本工具仅用于学习和研究目的。使用本工具产生的任何问题，开发者不承担责任。请支持正版游戏。
