@@ -19,6 +19,9 @@ public class AppSettings
     public List<CustomManifestPreset> CustomManifestPresets { get; set; } = new();
     public string CurrentCustomManifestName { get; set; } = ""; // v2.3.0 新增：记住上次选中的预设名
 
+    // v2.3.3 新增：自定义 Manifest 页首次进入风险提示是否已确认（默认 false，老用户升级后也会显示一次）
+    public bool HasAcknowledgedCustomManifestRisk { get; set; } = false;
+
     // ===== 应用设置 =====
     public bool DeveloperMode { get; set; } = false;
     public bool DebugMode { get; set; } = false;

@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Grid>
     <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
         <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
 
@@ -199,4 +200,53 @@
 
         </StackPanel>
     </ScrollViewer>
+
+        <!-- 首次进入风险提示遮罩（v2.3.3 新增；直到用户勾选确认并点击「进入」前，锁定整个页面） -->
+        <Grid x:Name="firstRunOverlay"
+              Visibility="Collapsed"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Opacity="0.97">
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="32"
+                    MaxWidth="520"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="24"
+                                  Foreground="{ThemeResource SystemFillColorCautionBrush}"/>
+                        <TextBlock Text="高级功能提示" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock TextWrapping="Wrap" FontSize="14">
+                        <Run Text="警告：自定义功能属于略复杂的高级功能，如果您不知道如何操作，请您不要使用此功能。" FontWeight="SemiBold"/>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" FontSize="14">
+                        <Run Text="如果想要使用此功能，在使用前，请访问"/>
+                        <Hyperlink NavigateUri="https://www.iryougi.com/index.php/docs/wuwa-helper/diy-acf/">
+                            <Run Text="自定义功能教程"/>
+                        </Hyperlink>
+                        <Run Text="。"/>
+                    </TextBlock>
+
+                    <CheckBox x:Name="chkRiskAcknowledged"
+                              Content="我已了解使用此功能的风险"
+                              Checked="RiskAcknowledged_CheckedChanged"
+                              Unchecked="RiskAcknowledged_CheckedChanged"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+                        <Button x:Name="btnLeaveOverlay" Content="离开" Click="LeaveOverlay_Click"/>
+                        <Button x:Name="btnEnterOverlay" Content="进入"
+                                Style="{StaticResource AccentButtonStyle}"
+                                IsEnabled="False"
+                                Click="EnterOverlay_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </Page>

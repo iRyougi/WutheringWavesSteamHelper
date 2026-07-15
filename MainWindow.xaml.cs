@@ -59,6 +59,15 @@ public sealed partial class MainWindow : Window
         });
     }
 
+    // ── 页面导航 ──────────────────────────────────────────────────────────────
+
+    /// <summary>供子页面（如自定义 Manifest 页的风险提示遮罩）调用，跳转回鸣潮主页面并同步导航栏选中项。</summary>
+    public void NavigateToWutheringWaves()
+    {
+        NavView.SelectedItem = NavView.MenuItems[0];
+        ContentFrame.Navigate(typeof(Views.Pages.WutheringWavesPage));
+    }
+
     // ── 按钮事件 ──────────────────────────────────────────────────────────────
 
     private void BtnUpdateBadge_Click(object sender, RoutedEventArgs e)

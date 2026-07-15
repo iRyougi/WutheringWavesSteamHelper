@@ -52,6 +52,13 @@ public sealed partial class CustomManifestPage : Page
         RefreshPresetComboBox(index);
         LoadPreset(_presets[index]);
         UpdateGlobalConfigInfoBar();
+
+        // 首次进入风险提示遮罩（v2.3.3）：未确认过风险的用户（含老用户升级后）每次进入本页都会看到
+        chkRiskAcknowledged.IsChecked = false;
+        btnEnterOverlay.IsEnabled = false;
+        firstRunOverlay.Visibility = _settings.HasAcknowledgedCustomManifestRisk
+            ? Visibility.Collapsed
+            : Visibility.Visible;
     }
 
     /// <summary>用 _presets 重填下拉，并选中指定项（带事件守卫）。</summary>
@@ -69,6 +76,31 @@ public sealed partial class CustomManifestPage : Page
     {
         if (_logScrollHandler != null)
             _logService.Logs.CollectionChanged -= _logScrollHandler;
+    }
+
+    // ── 首次进入风险提示遮罩（v2.3.3） ───────────────────────────────────────────
+
+    private void RiskAcknowledged_CheckedChanged(object sender, RoutedEventArgs e)
+    {
+        btnEnterOverlay.IsEnabled = chkRiskAcknowledged.IsChecked == true;
+    }
+
+    private void EnterOverlay_Click(object sender, RoutedEventArgs e)
+    {
+        _settings.HasAcknowledgedCustomManifestRisk = true;
+        if (_settingsService.Save(_settings))
+            _logService.AddLog("[自定义页] 用户已确认自定义功能风险提示");
+        else
+            _logService.AddLog("[自定义页][警告] 风险提示确认状态保存失败");
+
+        firstRunOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private void LeaveOverlay_Click(object sender, RoutedEventArgs e)
+    {
+        _logService.AddLog("[自定义页] 用户选择离开自定义页（未确认风险提示），下次进入将再次显示提示");
+        if (App.MainWindow is MainWindow mainWindow)
+            mainWindow.NavigateToWutheringWaves();
     }
 
     private void LoadPreset(CustomManifestPreset preset)

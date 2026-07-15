@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "鸣潮 Steam 助手"
-#define MyAppVersion "v2.3.0"
+#define MyAppVersion "v2.3.3"
 #define MyAppPublisher "KAMITSUBAKI METAVERSE R&D DIV"
 #define MyAppURL "https://www.iryougi.com/index.php/wutheringwavessteamhelper/"
 #define MyAppExeName "WetheringWavesSteamHelper_WinUI.exe"
