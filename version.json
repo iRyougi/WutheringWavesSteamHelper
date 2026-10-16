@@ -1,8 +1,8 @@
 {
-  "version": "2.3.3",
-  "releaseDate": "2026-08-16",
-  "availableAfter": "2026-08-16T20:00:00+08:00",
-  "message": "自定义Manifest页新增可选的游戏启动器路径，支持保存并一键打开对应启动器(#35)",
+  "version": "2.4.0",
+  "releaseDate": "2026-10-17",
+  "availableAfter": "2026-10-17T08:00:00+08:00",
+  "message": "新增「画质与启动器」页与画质档位选择，启动命令自动附带 -krqlv 参数；修复下载极致画质包后 Steam 启动报 0x3 的问题(#39)；窗口支持自由缩放",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
     "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/latest"
