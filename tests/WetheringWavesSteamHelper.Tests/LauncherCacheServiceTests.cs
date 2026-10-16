@@ -164,6 +164,49 @@ public sealed class LauncherCacheServiceTests : IDisposable
     }
 
     [Fact]
+    public void Restore_OldestBackupAtCapacity_UsesSelectedContent()
+    {
+        var service = Service();
+        var original = File.ReadAllBytes(GameTemp);
+        var selected = service.Backup(_launcherDir).BackupPath!;
+        Assert.True(service.SetBundlePath(_launcherDir, QualityTier.HD, _gameUhd, false).Success);
+        for (var i = 2; i < LauncherCacheService.MaxBackups; i++)
+            Assert.True(service.Backup(_launcherDir).Success);
+
+        var result = service.Restore(_launcherDir, selected);
+
+        Assert.True(result.Success, string.Join("\n", result.Messages));
+        Assert.Equal(original, File.ReadAllBytes(GameTemp));
+        Assert.Equal(LauncherCacheService.MaxBackups, service.ListBackups().Count);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Restore_ReadBackFails_RollsBackAndReturnsRecoveryBackup(bool throwIo)
+    {
+        var service = Service();
+        var original = File.ReadAllBytes(GameTemp);
+        var selected = service.Backup(_launcherDir).BackupPath!;
+        Assert.True(service.SetBundlePath(_launcherDir, QualityTier.HD, _gameUhd, false).Success);
+        var beforeRestore = File.ReadAllBytes(GameTemp);
+        var failingService = Service(verify: bytes =>
+        {
+            Assert.Equal(original, bytes);
+            if (throwIo) throw new IOException("simulated read-back IO failure");
+            return false;
+        });
+
+        var result = failingService.Restore(_launcherDir, selected);
+
+        Assert.False(result.Success);
+        Assert.Contains(result.Messages, m => m.Contains("已自动回滚"));
+        Assert.Equal(beforeRestore, File.ReadAllBytes(GameTemp));
+        Assert.NotNull(result.BackupPath);
+        Assert.Equal(beforeRestore, File.ReadAllBytes(result.BackupPath!));
+    }
+
+    [Fact]
     public void Restore_InvalidBackup_Refuses()
     {
         var bad = Path.Combine(_root, "bad.bin");

@@ -52,12 +52,15 @@ public static class JunctionService
         var psi = new ProcessStartInfo
         {
             FileName = "cmd.exe",
-            Arguments = $"/d /c mklink /J \"{link}\" \"{target}\"",
+            Arguments = "/d /v:off /c mklink /J \"%WWSH_JUNCTION_LINK%\" \"%WWSH_JUNCTION_TARGET%\"",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
         };
+        // cmd 只展开命令中的变量一次，变量值里的 %NAME% 和 !NAME! 保持路径字面内容。
+        psi.Environment["WWSH_JUNCTION_LINK"] = link;
+        psi.Environment["WWSH_JUNCTION_TARGET"] = target;
 
         try
         {

@@ -38,6 +38,28 @@ public sealed class JunctionServiceTests : IDisposable
     }
 
     [Fact]
+    public void Create_LiteralEnvironmentVariableInPath_IsNotExpanded()
+    {
+        var game = MakeGame("%USERNAME% & WuWa!");
+        var link = JunctionService.GetLinkPath(game)!;
+        try
+        {
+            var result = JunctionService.Create(game);
+
+            Assert.True(result.Success, result.Message);
+            Assert.True(File.Exists(LauncherCacheFiles.ClientExePath(link)));
+            Assert.Equal(game, Directory.ResolveLinkTarget(link, returnFinalTarget: true)!.FullName);
+        }
+        finally
+        {
+            // A failed command may still have created a dangling junction.
+            if (new DirectoryInfo(link).LinkTarget is not null)
+                Directory.Delete(link);
+        }
+        Assert.True(File.Exists(LauncherCacheFiles.ClientExePath(game)));
+    }
+
+    [Fact]
     public void Create_MakesJunctionToTarget()
     {
         var wegame = MakeGame("Wuthering Waves(2002137)");

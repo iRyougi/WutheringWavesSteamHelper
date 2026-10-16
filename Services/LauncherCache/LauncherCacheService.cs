@@ -146,24 +146,38 @@ public sealed class LauncherCacheService
         if (SafeIsRunning(launcherDir))
             return Fail("启动器正在运行，请先完全退出启动器（包括右下角托盘图标）后再操作");
 
+        string? before = null;
         try
         {
             var backupBytes = File.ReadAllBytes(backupFile);
             KrGameTempDocument.Parse(KrCacheCodec.Decode(backupBytes)); // 备份本身必须可解析
 
-            var before = CreateBackup(target, "restore-before.bin");
-            File.Copy(backupFile, target, overwrite: true);
+            // 保留选中的恢复点，直到恢复成功；使用已读取的字节，避免清理或外部变动影响来源。
+            before = CreateBackup(target, "restore-before.bin", prune: false);
+            ReplaceFile(target, backupBytes);
 
-            if (!File.ReadAllBytes(target).AsSpan().SequenceEqual(backupBytes))
-            {
-                File.Copy(before, target, overwrite: true);
-                return Fail("恢复后回读校验失败，已自动回滚");
-            }
+            var readBack = File.ReadAllBytes(target);
+            if (!readBack.AsSpan().SequenceEqual(backupBytes) || !(_verifyOverride?.Invoke(readBack) ?? true))
+                throw new IOException("恢复后回读校验失败");
+            PruneBackups();
             return new WriteResult(true, before, new[] { $"已从备份恢复：{backupFile}", $"恢复前的文件已另存：{before}" });
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or KrCacheFormatException)
         {
-            return Fail($"恢复失败：{ex.Message}");
+            if (before is null)
+                return Fail($"恢复失败：{ex.Message}");
+
+            var messages = new List<string>();
+            try
+            {
+                File.Copy(before, target, overwrite: true);
+                messages.Add($"恢复失败（{ex.Message}），已自动回滚到恢复前的状态");
+            }
+            catch (Exception rollbackEx) when (rollbackEx is IOException or UnauthorizedAccessException)
+            {
+                messages.Add($"恢复失败（{ex.Message}），自动回滚也失败（{rollbackEx.Message}），请用备份手动恢复：{before}");
+            }
+            return new WriteResult(false, before, messages);
         }
     }
 
@@ -252,13 +266,13 @@ public sealed class LauncherCacheService
         }
     }
 
-    private string CreateBackup(string source, string suffix)
+    private string CreateBackup(string source, string suffix, bool prune = true)
     {
         Directory.CreateDirectory(_backupDir);
         var name = $"{BackupPrefix}{_clock():yyyyMMdd-HHmmss-fff}.{suffix}";
         var path = Path.Combine(_backupDir, name);
         File.Copy(source, path, overwrite: false);
-        PruneBackups();
+        if (prune) PruneBackups();
         return path;
     }
 
