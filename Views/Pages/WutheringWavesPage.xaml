@@ -51,6 +51,22 @@
                             </TextBlock>
                         </StackPanel>
                     </Border>
+
+                    <!-- 画质档位（v2.4.0） -->
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="画质档位" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="cmbQualityTier" MinWidth="160"
+                                      SelectionChanged="QualityTier_SelectionChanged">
+                                <ComboBoxItem Content="极致 UHD" Tag="UHD"/>
+                                <ComboBoxItem Content="高清 HD" Tag="HD"/>
+                                <ComboBoxItem Content="流畅 SD" Tag="SD"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap"
+                                   Text="启动命令会带上对应的 -krqlv 参数。需先在官方启动器中下载该档位的资源包；各档位安装情况见「画质与启动器」页。"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

@@ -14,6 +14,9 @@ WutheringWavesSteamHelper 是一个通过生成必要的配置文件，让玩家
 - **鸣潮专属页面**：一键生成鸣潮 ACF 配置 / 复制国服客户端启动命令 / 打开官方启动器
 - **自定义 Manifest 页（v2.2.0 新增，v2.3.0 增强）**：自由填写任意游戏的 AppID/DepotID/BuildID/Manifest，生成 `appmanifest_<AppID>.acf` 与占位可执行文件；支持多预设管理（新建 / 另存为 / 重命名 / 删除）
 - **Steam 全局配置**：Steam 安装路径、SteamLibrary 路径、SteamID 在「设置」中统一管理，全应用共享
+- **窗口大小**：支持拖动窗口边缘调整大小，以及最大化和还原窗口
+
+- **画质与启动器（v2.4.0 新增）**：读取并修改新版官方启动器中 UHD / HD / SD 各档位的游戏目录（自动备份、校验、回滚），一键创建「Wuthering Waves Game」目录联接；鸣潮页可选择画质档位，启动命令自动附带 `-krqlv` 参数
 
 ## 系统要求
 
@@ -39,6 +42,11 @@ WutheringWavesSteamHelper 是一个通过生成必要的配置文件，让玩家
 ## 免责声明
 
 本工具仅用于学习和研究目的。使用本工具产生的任何问题，开发者不承担责任。请支持正版游戏。
+
+## 致谢
+
+- 启动器缓存（`kr_game_cache\kr_game_temp.bin`）格式资料参考 [B1ngFeng/wuwa-launcher-path](https://github.com/B1ngFeng/wuwa-launcher-path) 的公开文档；本项目为独立的 C# 实现，未使用其代码。
+- 画质档位说明参考 B 站专栏《关于极致画质，你想知道的一切！》（作者：冰封_）。
 
 ## 许可证
 

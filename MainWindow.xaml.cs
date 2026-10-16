@@ -19,7 +19,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(TopBarGrid);
 
-        ConfigureFixedWindow();
+        ConfigureWindow();
 
         ((FrameworkElement)Content).ActualThemeChanged += (_, _) => ApplyTitleBarColors();
 
@@ -82,7 +82,7 @@ public sealed partial class MainWindow : Window
 
     // ── 窗口配置 ──────────────────────────────────────────────────────────────
 
-    private void ConfigureFixedWindow()
+    private void ConfigureWindow()
     {
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
@@ -96,12 +96,12 @@ public sealed partial class MainWindow : Window
             _appWindow.SetIcon(iconPath);
         }
 
-        _appWindow.Resize(new SizeInt32(1100, 780));
+        _appWindow.Resize(new SizeInt32(1100, 800));
 
         if (_appWindow.Presenter is OverlappedPresenter presenter)
         {
-            presenter.IsResizable = false;
-            presenter.IsMaximizable = false;
+            presenter.IsResizable = true;
+            presenter.IsMaximizable = true;
         }
 
         ApplyTitleBarColors();
@@ -150,6 +150,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "CustomManifest":
                 ContentFrame.Navigate(typeof(Views.Pages.CustomManifestPage));
+                break;
+            case "QualityLauncher":
+                ContentFrame.Navigate(typeof(Views.Pages.QualityLauncherPage));
                 break;
             case "Settings":
                 ContentFrame.Navigate(typeof(Views.Pages.SettingsPage));

@@ -13,6 +13,8 @@ public class AppSettings
     public string BuildId { get; set; } = "";
     public string Manifest { get; set; } = "";
     public string CnGameSource { get; set; } = "official";
+    public string QualityTier { get; set; } = "HD";        // v2.4.0：画质档位 UHD / HD / SD
+    public string LauncherDirPath { get; set; } = "";      // v2.4.0：手动指定的新版启动器目录（含 kr_game_cache）
 
     // ===== 自定义 Manifest（v2.2.0 新增；v2.3.0 起 CustomManifestPresets 升为唯一数据源） =====
     public CustomManifestPreset CurrentCustomManifest { get; set; } = new(); // 镜像选中预设，保向后兼容

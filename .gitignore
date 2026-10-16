@@ -371,3 +371,4 @@ FodyWeavers.xsd
 Output/
 docs/
 .worktrees/
+.superpowers/

@@ -60,7 +60,7 @@
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
                         PaneDisplayMode="Left"
-                        OpenPaneLength="150"
+                        OpenPaneLength="200"
                         CompactPaneLength="48"
                         IsPaneOpen="True"
                         SelectionChanged="NavView_SelectionChanged">
@@ -74,6 +74,11 @@
                 <NavigationViewItem Content="自定义" Tag="CustomManifest">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7C3;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="画质与启动器" Tag="QualityLauncher">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7F4;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="敬请期待" Tag="Placeholder" IsEnabled="False">
