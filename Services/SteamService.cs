@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using WetheringWavesSteamHelper_WinUI.Services.LauncherCache;
 using System.Text.Json;
 
 namespace WetheringWavesSteamHelper_WinUI.Services;
@@ -269,20 +270,20 @@ public class SteamService
     }
 
     /// <summary>
-    /// 生成 Steam 启动命令（鸣潮专用：根据安装目录结构推断 exe）。
+    /// 生成 Steam 启动命令（鸣潮专用：根据安装目录结构推断 exe，并附加画质档位参数）。
     /// installPath：官方启动器版本为安装根目录（含 Wuthering Waves Game 子目录），
     ///              WeGame 版本为含 Client 文件夹的安装根目录。
     /// </summary>
-    public string GenerateLaunchCommand(string installPath)
+    public string GenerateLaunchCommand(string installPath, QualityTier tier)
     {
         // 优先检测 WeGame 结构（无 "Wuthering Waves Game" 层）
         var wegameExe = Path.Combine(installPath, "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
         if (File.Exists(wegameExe))
-            return $"\"{wegameExe}\" %command%";
+            return LaunchCommandBuilder.Build(wegameExe, tier);
 
         // 官方启动器结构
         var officialExe = Path.Combine(installPath, "Wuthering Waves Game", "Client", "Binaries", "Win64", "Client-Win64-Shipping.exe");
-        return $"\"{officialExe}\" %command%";
+        return LaunchCommandBuilder.Build(officialExe, tier);
     }
 
     /// <summary>

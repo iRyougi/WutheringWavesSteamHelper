@@ -5,6 +5,7 @@ using Windows.Storage.Pickers;
 using Windows.ApplicationModel.DataTransfer;
 using WetheringWavesSteamHelper_WinUI.Services;
 using WetheringWavesSteamHelper_WinUI.Models;
+using WetheringWavesSteamHelper_WinUI.Services.LauncherCache;
 
 namespace WetheringWavesSteamHelper_WinUI.Views.Pages;
 
@@ -13,7 +14,11 @@ public sealed partial class WutheringWavesPage : Page
     private readonly SteamService _steamService = new();
     private readonly SettingsService _settingsService = new();
     private readonly LogService _logService = LogService.Instance;
+    private readonly LauncherCacheService _launcherCache = new();
     private AppSettings _settings = new();
+
+    // LoadSettings 设置下拉框选中项期间不触发保存
+    private bool _loadingTier;
 
     // 启动初始化期间禁止触发游戏源检测
     private bool _sourceChanging = true;
@@ -83,6 +88,68 @@ public sealed partial class WutheringWavesPage : Page
             rdoWeGame.IsChecked = true;
         else
             rdoOfficial.IsChecked = true;
+
+        _loadingTier = true;
+        var savedTier = QualityTiers.Parse(_settings.QualityTier) ?? QualityTier.HD;
+        cmbQualityTier.SelectedItem = cmbQualityTier.Items
+            .OfType<ComboBoxItem>()
+            .First(i => (string)i.Tag == savedTier.BundleName());
+        _loadingTier = false;
+    }
+
+    private QualityTier SelectedTier() =>
+        QualityTiers.Parse((cmbQualityTier.SelectedItem as ComboBoxItem)?.Tag as string) ?? QualityTier.HD;
+
+    private void QualityTier_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loadingTier) return;
+        var tier = SelectedTier();
+        _settings.QualityTier = tier.BundleName();
+        if (!_settingsService.Save(_settings))
+            _logService.AddLog("[警告] 画质档位保存失败");
+        _logService.AddLog($"画质档位已切换为：{tier.DisplayName()} {tier.BundleName()}");
+    }
+
+    /// <summary>
+    /// 从新版启动器缓存（kr_game_temp.bin）取所选档位的客户端路径。
+    /// Cancelled=true 表示用户在确认框中取消了本次操作。
+    /// </summary>
+    private async Task<(bool Cancelled, string? ExePath)> ResolveFromLauncherCacheAsync(QualityTier tier)
+    {
+        var savedDir = _settings.LauncherDirPath;
+        var status = await Task.Run(() =>
+            _launcherCache.GetStatus(savedDir, _steamService.DetectCnWutheringWavesPaths()));
+
+        if (status.LauncherDir is null)
+        {
+            _logService.AddLog("未检测到新版启动器缓存，使用原有方式检测游戏路径");
+            return (false, null);
+        }
+
+        var bundle = status.Bundles.FirstOrDefault(b => b.Tier == tier);
+        if (bundle?.ClientExePath is null || !File.Exists(bundle.ClientExePath))
+        {
+            _logService.AddLog($"启动器缓存中没有可用的 {tier.BundleName()} 游戏目录，使用原有方式检测游戏路径");
+            return (false, null);
+        }
+
+        if (bundle.State == BundleInstallState.ResourcesMissing)
+        {
+            var confirm = new ContentDialog
+            {
+                Title = "未检测到该档位资源",
+                Content = $"启动器记录的 {tier.DisplayName()} {tier.BundleName()} 目录中未检测到该档位资源：\n{bundle.InstallDirPath}\n\n游戏可能回退到其它画质或报错，是否继续？",
+                PrimaryButtonText = "继续",
+                CloseButtonText = "取消",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = XamlRoot
+            };
+            if (await confirm.ShowAsync() != ContentDialogResult.Primary)
+                return (true, null);
+        }
+
+        _logService.AddLog($"路径来源：启动器缓存（{tier.DisplayName()} {tier.BundleName()}）：{bundle.InstallDirPath}");
+        return (false, bundle.ClientExePath);
     }
 
     private async void GameSource_Checked(object sender, RoutedEventArgs e)
@@ -314,10 +381,26 @@ public sealed partial class WutheringWavesPage : Page
         _logService.AddLog("正在搜索国服鸣潮安装路径...");
 
         string? selectedPath = null;
+        string? cacheExePath = null;
+        var tier = SelectedTier();
 
         // 如果用户已手动指定客户端 exe，优先使用
         var manualClientExePath = txtClientExePath.Text.Trim();
-        if (!string.IsNullOrEmpty(manualClientExePath) && File.Exists(manualClientExePath))
+        var useManual = !string.IsNullOrEmpty(manualClientExePath) && File.Exists(manualClientExePath);
+
+        // 官方启动器模式且未手动指定：优先读取新版启动器缓存中该档位的路径（修复 #39）
+        if (!useManual && rdoOfficial.IsChecked == true)
+        {
+            var (cancelled, exe) = await ResolveFromLauncherCacheAsync(tier);
+            if (cancelled) return;
+            cacheExePath = exe;
+        }
+
+        if (cacheExePath != null)
+        {
+            // 已从启动器缓存取得客户端路径，跳过原有检测
+        }
+        else if (useManual)
         {
             // 从 exe 路径推导出游戏根目录
             // 官方：...\Wuthering Waves Game\Client\Binaries\Win64\Client-Win64-Shipping.exe → ...\Wuthering Waves Game 的上级
@@ -412,8 +495,16 @@ public sealed partial class WutheringWavesPage : Page
             }
         }
 
-        _logService.AddLog($"已找到鸣潮路径：{selectedPath}");
-        var command = _steamService.GenerateLaunchCommand(selectedPath);
+        string command;
+        if (cacheExePath != null)
+        {
+            command = LaunchCommandBuilder.Build(cacheExePath, tier);
+        }
+        else
+        {
+            _logService.AddLog($"已找到鸣潮路径：{selectedPath}");
+            command = _steamService.GenerateLaunchCommand(selectedPath!, tier);
+        }
 
         var dataPackage = new DataPackage();
         dataPackage.SetText(command);
@@ -437,9 +528,12 @@ public sealed partial class WutheringWavesPage : Page
 
         string? launcherExe = null;
 
-        // 先在已知安装路径中搜索 launcher.exe
+        // 先在新版启动器目录（含 kr_game_cache）和已知安装路径中搜索 launcher.exe
         var paths = _steamService.DetectCnWutheringWavesPaths();
-        foreach (var installPath in paths)
+        var searchDirs = LauncherLocator.FindCandidates(_settings.LauncherDirPath, paths)
+            .Concat(paths)
+            .Distinct(StringComparer.OrdinalIgnoreCase);
+        foreach (var installPath in searchDirs)
         {
             var candidate = Path.Combine(installPath, "launcher.exe");
             if (File.Exists(candidate))
@@ -538,6 +632,7 @@ public sealed partial class WutheringWavesPage : Page
         _settings.BuildId = txtBuildId.Text.Trim();
         _settings.Manifest = txtManifest.Text.Trim();
         _settings.CnGameSource = rdoWeGame.IsChecked == true ? "wegame" : "official";
+        _settings.QualityTier = SelectedTier().BundleName();
 
         if (!_settingsService.Save(_settings))
             _logService.AddLog("[警告] 设置保存失败，下次启动将无法自动填入");
