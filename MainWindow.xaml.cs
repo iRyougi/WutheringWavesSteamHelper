@@ -19,7 +19,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(TopBarGrid);
 
-        ConfigureFixedWindow();
+        ConfigureWindow();
 
         ((FrameworkElement)Content).ActualThemeChanged += (_, _) => ApplyTitleBarColors();
 
@@ -82,7 +82,7 @@ public sealed partial class MainWindow : Window
 
     // ── 窗口配置 ──────────────────────────────────────────────────────────────
 
-    private void ConfigureFixedWindow()
+    private void ConfigureWindow()
     {
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
@@ -100,8 +100,8 @@ public sealed partial class MainWindow : Window
 
         if (_appWindow.Presenter is OverlappedPresenter presenter)
         {
-            presenter.IsResizable = false;
-            presenter.IsMaximizable = false;
+            presenter.IsResizable = true;
+            presenter.IsMaximizable = true;
         }
 
         ApplyTitleBarColors();
