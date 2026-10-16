@@ -151,6 +151,9 @@ public sealed partial class MainWindow : Window
             case "CustomManifest":
                 ContentFrame.Navigate(typeof(Views.Pages.CustomManifestPage));
                 break;
+            case "QualityLauncher":
+                ContentFrame.Navigate(typeof(Views.Pages.QualityLauncherPage));
+                break;
             case "Settings":
                 ContentFrame.Navigate(typeof(Views.Pages.SettingsPage));
                 break;
