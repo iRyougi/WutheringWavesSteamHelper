@@ -23,6 +23,10 @@
     <EmbeddedResource Remove="Output\**" />
     <None Remove="Output\**" />
     <Page Remove="Output\**" />
+    <Compile Remove="tests\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <None Remove="tests\**" />
+    <Page Remove="tests\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="WutheringWavesSteamHelper.iss" />
@@ -74,5 +78,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Output\**" />
+    <PRIResource Remove="tests\**" />
   </ItemGroup>
 </Project>
