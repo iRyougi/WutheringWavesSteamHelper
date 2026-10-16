@@ -96,7 +96,7 @@ public sealed partial class MainWindow : Window
             _appWindow.SetIcon(iconPath);
         }
 
-        _appWindow.Resize(new SizeInt32(1100, 780));
+        _appWindow.Resize(new SizeInt32(1100, 800));
 
         if (_appWindow.Presenter is OverlappedPresenter presenter)
         {
