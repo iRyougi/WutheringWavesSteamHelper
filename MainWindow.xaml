@@ -60,7 +60,7 @@
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
                         PaneDisplayMode="Left"
-                        OpenPaneLength="150"
+                        OpenPaneLength="200"
                         CompactPaneLength="48"
                         IsPaneOpen="True"
                         SelectionChanged="NavView_SelectionChanged">
