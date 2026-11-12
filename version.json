@@ -1,8 +1,8 @@
 {
-  "version": "2.4.0",
-  "releaseDate": "2026-10-17",
-  "availableAfter": "2026-10-17T08:00:00+08:00",
-  "message": "新增「画质与启动器」页与画质档位选择，启动命令自动附带 -krqlv 参数；修复下载极致画质包后 Steam 启动报 0x3 的问题(#39)；窗口支持自由缩放",
+  "version": "3.0.0",
+  "releaseDate": "2026-11-12",
+  "availableAfter": "2026-11-13T08:00:00+08:00",
+  "message": "适配鸣潮 3.8：Steam 版改为官方启动器后，生成配置时改为创建占位 launcher.exe，修复 Steam 启动提示找不到 launcher.exe 的问题。老用户请在鸣潮页重新点击「生成」并重启 Steam",
   "downloadUrl": {
     "domestic": "https://pan.baidu.com/s/1ME9K0eUarabvG81FpWe7RA?pwd=kafu",
     "global": "https://github.com/iRyougi/WutheringWavesSteamHelper/releases/latest"
