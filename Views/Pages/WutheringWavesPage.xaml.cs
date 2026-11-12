@@ -11,6 +11,9 @@ namespace WetheringWavesSteamHelper_WinUI.Views.Pages;
 
 public sealed partial class WutheringWavesPage : Page
 {
+    /// <summary>Steam 3513350 appinfo 中 config/launch/0/executable 登记的文件名（3.8 起为官方启动器）。</summary>
+    private const string SteamLaunchExecutable = "launcher.exe";
+
     private readonly SteamService _steamService = new();
     private readonly SettingsService _settingsService = new();
     private readonly LogService _logService = LogService.Instance;
@@ -305,7 +308,9 @@ public sealed partial class WutheringWavesPage : Page
             var launcherPath = Path.Combine(steamInstallPath, "steam.exe");
 
             var acfPath = Path.Combine(steamappsPath, "appmanifest_3513350.acf");
-            var exePath = Path.Combine(gamePath, "Wuthering Waves.exe");
+            // 3.8 起 Steam appinfo 的 launch executable 由 "Wuthering Waves.exe" 改为 "launcher.exe"，
+            // Steam 启动前会校验该文件存在，缺失即报 missing executable。
+            var exePath = Path.Combine(gamePath, SteamLaunchExecutable);
 
             // 若 ACF 文件已存在，询问是否覆盖
             if (File.Exists(acfPath))

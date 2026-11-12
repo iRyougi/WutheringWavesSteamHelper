@@ -4,6 +4,21 @@
 
 ---
 
+## v3.0.0 (2026-11-12)
+
+> 鸣潮 3.8 起 Steam 版改为通过官方启动器下载与启动，本软件随之升级为 v3.x.x。
+
+### 🐛 修复
+
+- 适配鸣潮 3.8 Steam 版启动方式变更：Steam 启动项由 `Wuthering Waves.exe` 改为 `launcher.exe`，鸣潮页「生成」现在会创建占位文件 `launcher.exe`，修复 Steam 启动时提示找不到 `launcher.exe`（missing executable）的问题
+
+### 📌 升级提示
+
+- 老用户升级后，请在鸣潮页重新点击「生成」（或手动在 `steamapps\common\Wuthering Waves\` 下新建空文件 `launcher.exe`），然后重启 Steam
+- 请勿在 Steam 中更新或验证该游戏，否则 Steam 会下载官方启动器并替换占位文件
+
+---
+
 ## v2.4.0 (2026-10-17)
 
 > v2.4.x 为 2 字头最后一个功能版本。鸣潮 3.8 起 Steam 版也将改为通过官方启动器启动，届时本软件升级为 v3.x.x。
