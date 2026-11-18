@@ -8,8 +8,16 @@
     xmlns:local="using:WetheringWavesSteamHelper_WinUI.Views.Pages"
     mc:Ignorable="d">
 
-    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
-        <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
+    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                  HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
+        <!-- 三列 Grid 显式居中：两侧 * 列对称分配剩余宽度，避免 Stretch+MaxWidth 在 ScrollViewer 中放大窗口后偏移 -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1000*" MaxWidth="1000"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Padding="24" Spacing="16">
 
             <!-- 启动器 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -125,5 +133,6 @@
             </Border>
 
         </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>
