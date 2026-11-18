@@ -7,8 +7,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
-        <StackPanel Padding="24" Spacing="16" MaxWidth="1000">
+    <ScrollViewer Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                  HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
+        <!-- 三列 Grid 显式居中：两侧 * 列对称分配剩余宽度，避免 Stretch+MaxWidth 在 ScrollViewer 中放大窗口后偏移 -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1000*" MaxWidth="1000"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Padding="24" Spacing="16">
 
             <!-- 全局配置缺失提示（OnLoaded 判定后切换可见性） -->
             <InfoBar x:Name="globalConfigInfoBar"
@@ -220,5 +228,6 @@
             </Border>
 
         </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>
